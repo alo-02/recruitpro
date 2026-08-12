@@ -31,8 +31,19 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'role' => UserRole::Student,
+            'is_active' => true,
+            'is_blocked' => false,
             'remember_token' => Str::random(10),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $role = $user->role instanceof UserRole ? $user->role->value : (string) $user->role;
+            \Spatie\Permission\Models\Role::findOrCreate($role);
+            $user->syncRoles([$role]);
+        });
     }
 
     /**

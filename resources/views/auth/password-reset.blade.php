@@ -12,13 +12,16 @@
         </div>
 
         <div class="rp-card rp-card-lg">
-            <form id="reset-form">
+            @include('partials.flash')
+            <form method="POST" action="{{ route('password.email') }}">
+                @csrf
                 <div class="mb-4">
                     <label class="form-label text-label-md text-muted-rp" for="reset-email">Email Address</label>
                     <div class="rp-input-icon">
                         <span class="material-symbols-outlined">mail</span>
-                        <input type="email" id="reset-email" class="form-control" placeholder="name@company.com" required>
+                        <input type="email" name="email" id="reset-email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="name@company.com" required>
                     </div>
+                    @error('email')<div class="text-danger text-label-md mt-1">{{ $message }}</div>@enderror
                 </div>
                 <button type="submit" class="btn btn-rp-primary w-100 py-2 mb-3">Send Reset Link</button>
                 <a href="{{ route('login') }}" class="btn btn-rp-outline w-100 py-2 d-flex align-items-center justify-content-center gap-1">
@@ -28,13 +31,4 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-document.getElementById('reset-form')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    showToast('Password reset link sent to your email.', 'success');
-});
-</script>
-@endpush
 @endsection

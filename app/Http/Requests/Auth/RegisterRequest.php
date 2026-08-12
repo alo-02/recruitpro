@@ -21,6 +21,7 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'role' => ['required', Rule::in([UserRole::Student->value, UserRole::Recruiter->value])],
+            'company_name' => ['nullable', 'required_if:role,recruiter', 'string', 'max:255'],
         ];
     }
 }

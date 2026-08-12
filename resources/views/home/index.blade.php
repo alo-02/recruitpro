@@ -44,17 +44,11 @@
         </a>
     </div>
     <div class="row g-3">
-        @foreach([
-            ['icon' => 'terminal', 'name' => 'Technology'],
-            ['icon' => 'campaign', 'name' => 'Marketing'],
-            ['icon' => 'account_balance', 'name' => 'Finance'],
-            ['icon' => 'architecture', 'name' => 'Engineering'],
-            ['icon' => 'palette', 'name' => 'Design'],
-        ] as $cat)
+        @foreach(\App\Enums\JobCategory::options() as $cat)
         <div class="col-6 col-md">
-            <a href="{{ route('jobs.index') }}" class="category-card">
+            <a href="{{ route('jobs.index', ['category' => [$cat['value']]]) }}" class="category-card">
                 <div class="category-icon"><span class="material-symbols-outlined text-primary-rp">{{ $cat['icon'] }}</span></div>
-                <span class="text-label-md">{{ $cat['name'] }}</span>
+                <span class="text-label-md">{{ $cat['label'] }}</span>
             </a>
         </div>
         @endforeach

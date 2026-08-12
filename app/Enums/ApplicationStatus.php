@@ -10,6 +10,7 @@ enum ApplicationStatus: string
     case Offer = 'offer';
     case Rejected = 'rejected';
     case Hired = 'hired';
+    case Withdrawn = 'withdrawn';
 
     public function label(): string
     {
@@ -20,6 +21,7 @@ enum ApplicationStatus: string
             self::Offer => 'Offer Received',
             self::Rejected => 'Rejected',
             self::Hired => 'Hired',
+            self::Withdrawn => 'Withdrawn',
         };
     }
 
@@ -32,6 +34,12 @@ enum ApplicationStatus: string
             self::Offer => 'bg-primary',
             self::Rejected => 'bg-danger',
             self::Hired => 'bg-info',
+            self::Withdrawn => 'bg-dark',
         };
+    }
+
+    public function canWithdraw(): bool
+    {
+        return in_array($this, [self::Applied, self::Screening], true);
     }
 }

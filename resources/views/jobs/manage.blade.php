@@ -22,7 +22,8 @@
                     <th>Type</th>
                     <th>Applicants</th>
                     <th>Status</th>
-                    <th>Posted</th>
+                    <th>Moderation</th>
+                    <th>Deadline</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -39,18 +40,24 @@
                             {{ $job->status->label() }}
                         </span>
                     </td>
-                    <td class="text-body-md text-muted-rp">{{ $job->published_at?->format('M d, Y') ?? '—' }}</td>
-                    <td>
+                    <td><span class="badge {{ $job->moderation_status->badgeClass() }}">{{ $job->moderation_status->label() }}</span></td>
+                    <td class="text-body-md text-muted-rp">{{ $job->deadline?->format('M d, Y') ?? '—' }}</td>
+                    <td class="text-nowrap">
+                        <a href="{{ route('jobs.edit', $job) }}" class="btn btn-rp-outline btn-sm">Edit</a>
                         @if($job->status->value === 'active')
                         <form action="{{ route('jobs.close', $job) }}" method="POST" class="d-inline">
                             @csrf @method('PATCH')
-                            <button class="btn btn-outline-danger btn-sm">Close</button>
+                            <button class="btn btn-outline-warning btn-sm">Close</button>
                         </form>
                         @endif
+                        <form action="{{ route('jobs.destroy', $job) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this job?')">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="text-center text-muted-rp py-4">No job postings yet.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted-rp py-4">No job postings yet.</td></tr>
                 @endforelse
             </tbody>
         </table>

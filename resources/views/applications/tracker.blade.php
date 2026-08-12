@@ -27,7 +27,15 @@
                     <td class="text-body-md text-muted-rp">{{ $app->jobPosting->company->name }}</td>
                     <td class="text-body-md text-muted-rp">{{ $app->applied_at->format('M d, Y') }}</td>
                     <td><span class="badge {{ $app->status->badgeClass() }} text-label-md">{{ $app->status->label() }}</span></td>
-                    <td><a href="{{ route('jobs.show', $app->jobPosting) }}" class="btn btn-rp-outline btn-sm">View</a></td>
+                    <td class="text-nowrap">
+                        <a href="{{ route('applications.show', $app) }}" class="btn btn-rp-outline btn-sm">View</a>
+                        @if($app->status->canWithdraw())
+                        <form method="POST" action="{{ route('applications.withdraw', $app) }}" class="d-inline" onsubmit="return confirm('Withdraw this application?')">
+                            @csrf @method('PATCH')
+                            <button class="btn btn-outline-danger btn-sm">Withdraw</button>
+                        </form>
+                        @endif
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

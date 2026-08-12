@@ -11,6 +11,20 @@
         </div>
 
         <form method="GET" action="{{ route('jobs.index') }}" id="job-filters">
+            @if(request('q'))
+                <input type="hidden" name="q" value="{{ request('q') }}">
+            @endif
+            <div class="mb-4 pb-3 border-bottom">
+                <h3 class="text-label-md text-muted-rp mb-2">Category</h3>
+                @foreach(\App\Enums\JobCategory::cases() as $cat)
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" name="category[]" value="{{ $cat->value }}" id="cat-{{ $cat->value }}"
+                        {{ in_array($cat->value, (array) request('category')) ? 'checked' : '' }}>
+                    <label class="form-check-label text-body-md" for="cat-{{ $cat->value }}">{{ $cat->label() }}</label>
+                </div>
+                @endforeach
+            </div>
+
             <div class="mb-4 pb-3 border-bottom">
                 <h3 class="text-label-md text-muted-rp mb-2">Job Type</h3>
                 @foreach(['full-time' => 'Full-time', 'contract' => 'Contract', 'internship' => 'Internship'] as $val => $label)
@@ -31,6 +45,11 @@
                     <label class="form-check-label text-body-md" for="loc-{{ $val }}">{{ $label }}</label>
                 </div>
                 @endforeach
+            </div>
+
+            <div class="mb-4 pb-3 border-bottom">
+                <h3 class="text-label-md text-muted-rp mb-2">City / Area</h3>
+                <input type="text" name="location" class="form-control" value="{{ request('location') }}" placeholder="e.g. Dhaka">
             </div>
 
             <button type="submit" class="btn btn-rp-primary w-100">Apply Filters</button>
@@ -61,6 +80,7 @@
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex gap-2">
+                            <span class="rp-tag">{{ $job->category?->label() ?? 'General' }}</span>
                             <span class="rp-tag">{{ ucfirst(str_replace('-', ' ', $job->type)) }}</span>
                             <span class="text-label-md">{{ $job->salaryDisplay() }}</span>
                         </div>

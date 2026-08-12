@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Enums\UserRole;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,7 +26,7 @@ class AuthTest extends TestCase
             'role' => 'student',
         ]);
 
-        $response->assertRedirect(route('student.dashboard'));
+        $response->assertRedirect(route('verification.notice'));
         $this->assertAuthenticated();
         $this->assertDatabaseHas('users', ['email' => 'newstudent@test.com', 'role' => 'student']);
     }
@@ -37,6 +37,7 @@ class AuthTest extends TestCase
             'email' => 'login@test.com',
             'password' => 'password',
             'role' => UserRole::Student,
+            'email_verified_at' => now(),
         ]);
 
         $this->post('/login', [
@@ -49,14 +50,20 @@ class AuthTest extends TestCase
 
     public function test_student_cannot_access_admin(): void
     {
-        $user = User::factory()->create(['role' => UserRole::Student]);
+        $user = User::factory()->create([
+            'role' => UserRole::Student,
+            'email_verified_at' => now(),
+        ]);
 
         $this->actingAs($user)->get('/admin')->assertStatus(403);
     }
 
     public function test_recruiter_cannot_access_student_dashboard(): void
     {
-        $user = User::factory()->create(['role' => UserRole::Recruiter]);
+        $user = User::factory()->create([
+            'role' => UserRole::Recruiter,
+            'email_verified_at' => now(),
+        ]);
 
         $this->actingAs($user)->get('/student/dashboard')->assertStatus(403);
     }

@@ -1,4 +1,4 @@
-@extends('layouts.dashboard', ['sidebar' => 'student'])
+@extends('layouts.dashboard', ['sidebar' => auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isRecruiter() ? 'recruiter' : 'student')])
 
 @section('title', 'Account Settings')
 
@@ -9,61 +9,88 @@
 </div>
 
 <div class="row g-4">
-    <div class="col-lg-3">
-        <div class="list-group">
-            <a href="#profile" class="list-group-item list-group-item-action active">Profile</a>
-            <a href="#security" class="list-group-item list-group-item-action">Security</a>
-            <a href="#notifications" class="list-group-item list-group-item-action">Notifications</a>
-            <a href="#privacy" class="list-group-item list-group-item-action">Privacy</a>
-        </div>
-    </div>
-    <div class="col-lg-9">
-        <div class="rp-card rp-card-lg mb-4" id="profile">
-            <h2 class="text-title-lg text-primary-rp mb-4">Profile Settings</h2>
-            <form>
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <img src="https://ui-avatars.com/api/?name=Alex+Johnson&size=64&background=0051d5&color=fff" class="rounded-circle" width="64" height="64" alt="">
-                    <button type="button" class="btn btn-rp-outline btn-sm">Change Photo</button>
-                </div>
+    <div class="col-lg-7">
+        <div class="rp-card rp-card-lg mb-4">
+            <h2 class="text-title-lg text-primary-rp mb-4">Profile & Security</h2>
+            <form method="POST" action="{{ route('settings.update') }}">
+                @csrf @method('PUT')
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label class="form-label text-label-md text-muted-rp">Full Name</label>
-                        <input type="text" class="form-control" value="Alex Johnson">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label text-label-md text-muted-rp">Email</label>
-                        <input type="email" class="form-control" value="alex@university.edu">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" name="current_password" class="form-control">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label text-label-md text-muted-rp">Phone</label>
-                        <input type="tel" class="form-control" value="+1 (555) 123-4567">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="password" class="form-control">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label text-label-md text-muted-rp">Location</label>
-                        <input type="text" class="form-control" value="San Francisco, CA">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" name="password_confirmation" class="form-control">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-rp-primary" onclick="event.preventDefault(); showToast('Settings saved!', 'success')">Save Changes</button>
+                <button class="btn btn-rp-primary">Save Settings</button>
             </form>
-        </div>
 
-        <div class="rp-card rp-card-lg" id="security">
-            <h2 class="text-title-lg text-primary-rp mb-4">Security</h2>
-            <div class="mb-3">
-                <label class="form-label text-label-md text-muted-rp">Current Password</label>
-                <input type="password" class="form-control">
-            </div>
-            <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <label class="form-label text-label-md text-muted-rp">New Password</label>
-                    <input type="password" class="form-control">
+            <hr class="my-4">
+            <h3 class="text-title-lg mb-3">{{ __('Language') }}</h3>
+            <form method="POST" action="{{ route('locale.switch') }}" class="d-flex gap-2 mb-3">
+                @csrf
+                <select name="locale" class="form-select">
+                    <option value="en" @selected(($user->locale ?? app()->getLocale()) === 'en')>{{ __('English') }}</option>
+                    <option value="bn" @selected(($user->locale ?? app()->getLocale()) === 'bn')>{{ __('Bangla') }}</option>
+                </select>
+                <button class="btn btn-rp-outline">Save</button>
+            </form>
+
+            <hr class="my-4">
+            <h3 class="text-title-lg mb-3">Push Notifications</h3>
+            <form method="POST" action="{{ route('push.subscribe') }}">
+                @csrf
+                <input type="url" name="endpoint" class="form-control mb-2" placeholder="Web Push endpoint URL" required>
+                <button class="btn btn-rp-outline">Save Push Endpoint</button>
+            </form>
+
+            <hr class="my-4">
+            <h3 class="text-title-lg mb-3">Two-Factor Authentication</h3>
+            <p class="text-muted-rp mb-3">Status: <strong>{{ $user->two_factor_enabled ? 'Enabled' : 'Disabled' }}</strong></p>
+            @if($user->two_factor_enabled)
+                <form method="POST" action="{{ route('two-factor.disable') }}">@csrf
+                    <button class="btn btn-outline-danger">Disable 2FA</button>
+                </form>
+            @else
+                <form method="POST" action="{{ route('two-factor.enable') }}">@csrf
+                    <button class="btn btn-rp-outline">Enable email 2FA</button>
+                </form>
+            @endif
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="rp-card rp-card-lg">
+            <h2 class="text-title-lg text-primary-rp mb-3">Notifications</h2>
+            @forelse($notifications as $notification)
+                <div class="border-bottom py-3 d-flex justify-content-between gap-2">
+                    <div>
+                        <div class="text-body-md">{{ $notification->data['message'] ?? class_basename($notification->type) }}</div>
+                        <div class="text-label-md text-muted-rp">{{ $notification->created_at->diffForHumans() }}</div>
+                    </div>
+                    @if(is_null($notification->read_at))
+                    <form method="POST" action="{{ route('notifications.read', $notification->id) }}">
+                        @csrf
+                        <button class="btn btn-sm btn-rp-outline">Mark read</button>
+                    </form>
+                    @endif
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label text-label-md text-muted-rp">Confirm Password</label>
-                    <input type="password" class="form-control">
-                </div>
-            </div>
-            <button type="button" class="btn btn-rp-primary" onclick="showToast('Password updated!', 'success')">Update Password</button>
+            @empty
+                <p class="text-muted-rp mb-0">No notifications yet.</p>
+            @endforelse
         </div>
     </div>
 </div>

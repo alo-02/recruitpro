@@ -23,8 +23,8 @@
     @foreach([
         ['icon' => 'description', 'label' => 'Applications', 'value' => $stats['applications']],
         ['icon' => 'event', 'label' => 'Interviews', 'value' => $stats['interviews']],
-        ['icon' => 'visibility', 'label' => 'Profile Views', 'value' => $stats['views']],
-        ['icon' => 'bookmark', 'label' => 'Saved Jobs', 'value' => $stats['saved']],
+        ['icon' => 'chat', 'label' => 'Messages', 'value' => $stats['messages']],
+        ['icon' => 'person', 'label' => 'Profile %', 'value' => $stats['profile']],
     ] as $stat)
     <div class="col-6 col-lg-3">
         <div class="stat-card">

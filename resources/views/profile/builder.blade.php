@@ -15,6 +15,10 @@
                 @csrf @method('PUT')
                 <h2 class="text-title-lg text-primary-rp mb-4">Personal Information</h2>
                 <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <label class="form-label text-label-md text-muted-rp">Profile Photo</label>
+                        <input type="file" name="avatar" class="form-control" accept="image/*">
+                    </div>
                     <div class="col-md-6">
                         <label class="form-label text-label-md text-muted-rp">Full Name</label>
                         <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
@@ -41,24 +45,72 @@
                 <input type="text" name="skills" class="form-control mb-4" value="{{ old('skills', implode(', ', $profile->skills ?? [])) }}" placeholder="JavaScript, React, Python">
 
                 <h2 class="text-title-lg text-primary-rp mb-3">Education</h2>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label text-label-md text-muted-rp">School</label>
-                        <input type="text" name="school" class="form-control" value="{{ old('school', $profile->education['school'] ?? '') }}">
+                <div id="education-list" class="mb-3">
+                    @php
+                        $eduRows = old('education', $profile->educationEntries() ?: [['school'=>'','degree'=>'','graduation_year'=>'','gpa'=>'']]);
+                    @endphp
+                    @foreach($eduRows as $i => $edu)
+                    <div class="border rounded p-3 mb-3 education-row">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-label-md text-muted-rp">Education #{{ $i + 1 }}</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.education-row').remove()">Remove</button>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-label-md text-muted-rp">School</label>
+                                <input type="text" name="education[{{ $i }}][school]" class="form-control" value="{{ $edu['school'] ?? '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-label-md text-muted-rp">Degree</label>
+                                <input type="text" name="education[{{ $i }}][degree]" class="form-control" value="{{ $edu['degree'] ?? '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-label-md text-muted-rp">Graduation Year</label>
+                                <input type="number" name="education[{{ $i }}][graduation_year]" class="form-control" value="{{ $edu['graduation_year'] ?? '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-label-md text-muted-rp">GPA</label>
+                                <input type="text" name="education[{{ $i }}][gpa]" class="form-control" value="{{ $edu['gpa'] ?? '' }}">
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label text-label-md text-muted-rp">Degree</label>
-                        <input type="text" name="degree" class="form-control" value="{{ old('degree', $profile->education['degree'] ?? '') }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label text-label-md text-muted-rp">Graduation Year</label>
-                        <input type="number" name="graduation_year" class="form-control" value="{{ old('graduation_year', $profile->education['graduation_year'] ?? '') }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label text-label-md text-muted-rp">GPA</label>
-                        <input type="text" name="gpa" class="form-control" value="{{ old('gpa', $profile->education['gpa'] ?? '') }}">
-                    </div>
+                    @endforeach
                 </div>
+                <button type="button" class="btn btn-rp-outline btn-sm mb-4" onclick="addEducation()">+ Add Education</button>
+
+                <h2 class="text-title-lg text-primary-rp mb-3">Experience</h2>
+                <div id="experience-list" class="mb-3">
+                    @php
+                        $expRows = old('experience', $profile->experienceEntries() ?: [['title'=>'','company'=>'','years'=>'','details'=>'']]);
+                    @endphp
+                    @foreach($expRows as $i => $exp)
+                    <div class="border rounded p-3 mb-3 experience-row">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-label-md text-muted-rp">Experience #{{ $i + 1 }}</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.experience-row').remove()">Remove</button>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-label-md text-muted-rp">Title</label>
+                                <input type="text" name="experience[{{ $i }}][title]" class="form-control" value="{{ $exp['title'] ?? '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-label-md text-muted-rp">Company</label>
+                                <input type="text" name="experience[{{ $i }}][company]" class="form-control" value="{{ $exp['company'] ?? '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-label-md text-muted-rp">Years</label>
+                                <input type="text" name="experience[{{ $i }}][years]" class="form-control" value="{{ $exp['years'] ?? '' }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-label-md text-muted-rp">Details</label>
+                                <textarea name="experience[{{ $i }}][details]" class="form-control" rows="3">{{ $exp['details'] ?? '' }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                <button type="button" class="btn btn-rp-outline btn-sm mb-4" onclick="addExperience()">+ Add Experience</button>
 
                 <div class="mb-4">
                     <label class="form-label text-label-md text-muted-rp">Resume (PDF/DOC)</label>
@@ -73,7 +125,7 @@
     <div class="col-lg-4">
         <div class="rp-card rp-card-lg position-sticky" style="top:80px;">
             <div class="text-center mb-4">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=96&background=0051d5&color=fff" class="rounded-circle mb-3" width="96" height="96" alt="Profile">
+                <img src="{{ $profile->avatarUrl() }}" class="rounded-circle mb-3" width="96" height="96" alt="Profile">
                 <h3 class="text-title-lg text-primary-rp">{{ $user->name }}</h3>
                 <p class="text-body-md text-muted-rp">{{ $profile->headline ?? 'Add a headline' }}</p>
             </div>
@@ -90,3 +142,44 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+let eduIndex = {{ count($eduRows ?? [1]) }};
+let expIndex = {{ count($expRows ?? [1]) }};
+
+function addEducation() {
+    const i = eduIndex++;
+    document.getElementById('education-list').insertAdjacentHTML('beforeend', `
+        <div class="border rounded p-3 mb-3 education-row">
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-label-md text-muted-rp">Education #${i + 1}</span>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.education-row').remove()">Remove</button>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label text-label-md text-muted-rp">School</label><input type="text" name="education[${i}][school]" class="form-control"></div>
+                <div class="col-md-6"><label class="form-label text-label-md text-muted-rp">Degree</label><input type="text" name="education[${i}][degree]" class="form-control"></div>
+                <div class="col-md-6"><label class="form-label text-label-md text-muted-rp">Graduation Year</label><input type="number" name="education[${i}][graduation_year]" class="form-control"></div>
+                <div class="col-md-6"><label class="form-label text-label-md text-muted-rp">GPA</label><input type="text" name="education[${i}][gpa]" class="form-control"></div>
+            </div>
+        </div>`);
+}
+
+function addExperience() {
+    const i = expIndex++;
+    document.getElementById('experience-list').insertAdjacentHTML('beforeend', `
+        <div class="border rounded p-3 mb-3 experience-row">
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-label-md text-muted-rp">Experience #${i + 1}</span>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.experience-row').remove()">Remove</button>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label text-label-md text-muted-rp">Title</label><input type="text" name="experience[${i}][title]" class="form-control"></div>
+                <div class="col-md-6"><label class="form-label text-label-md text-muted-rp">Company</label><input type="text" name="experience[${i}][company]" class="form-control"></div>
+                <div class="col-md-6"><label class="form-label text-label-md text-muted-rp">Years</label><input type="text" name="experience[${i}][years]" class="form-control"></div>
+                <div class="col-12"><label class="form-label text-label-md text-muted-rp">Details</label><textarea name="experience[${i}][details]" class="form-control" rows="3"></textarea></div>
+            </div>
+        </div>`);
+}
+</script>
+@endpush

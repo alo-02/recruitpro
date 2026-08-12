@@ -11,25 +11,50 @@
 
     <div class="flex-grow-1 overflow-auto py-2">
         <a href="{{ route('admin.index') }}" class="rp-sidebar-link {{ request()->routeIs('admin.index') ? 'active' : '' }}">
-            <span class="material-symbols-outlined {{ request()->routeIs('admin.index') ? 'icon-fill' : '' }}">dashboard</span>
-            Overview
+            <span class="material-symbols-outlined">dashboard</span> Overview
         </a>
-        <a href="{{ route('admin.index') }}#users" class="rp-sidebar-link">
-            <span class="material-symbols-outlined">group</span>
-            Users
+        <a href="{{ route('admin.users') }}" class="rp-sidebar-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">group</span> Users
         </a>
-        <a href="{{ route('jobs.manage') }}" class="rp-sidebar-link">
-            <span class="material-symbols-outlined">work</span>
-            Jobs
+        <a href="{{ route('admin.companies') }}" class="rp-sidebar-link {{ request()->routeIs('admin.companies*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">business</span> Companies
         </a>
-        <a href="{{ route('admin.index') }}#reports" class="rp-sidebar-link">
-            <span class="material-symbols-outlined">analytics</span>
-            Reports
+        <a href="{{ route('admin.jobs') }}" class="rp-sidebar-link {{ request()->routeIs('admin.jobs*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">work</span> Jobs
+        </a>
+        <a href="{{ route('admin.reports') }}" class="rp-sidebar-link {{ request()->routeIs('admin.reports*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">analytics</span> Reports
+        </a>
+        <a href="{{ route('admin.analytics') }}" class="rp-sidebar-link {{ request()->routeIs('admin.analytics') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">monitoring</span> Analytics
+        </a>
+        <a href="{{ route('admin.cms') }}" class="rp-sidebar-link {{ request()->routeIs('admin.cms*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">article</span> CMS
+        </a>
+        <a href="{{ route('admin.plans') }}" class="rp-sidebar-link {{ request()->routeIs('admin.plans*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">workspace_premium</span> Plans
+        </a>
+        <a href="{{ route('admin.flags') }}" class="rp-sidebar-link {{ request()->routeIs('admin.flags*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">toggle_on</span> Feature Flags
+        </a>
+        <a href="{{ route('admin.abuse') }}" class="rp-sidebar-link {{ request()->routeIs('admin.abuse*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">report</span> Abuse Reports
+        </a>
+        <a href="{{ route('admin.activity-logs') }}" class="rp-sidebar-link {{ request()->routeIs('admin.activity-logs') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">history</span> Activity Logs
+        </a>
+        <a href="{{ route('admin.security-events') }}" class="rp-sidebar-link {{ request()->routeIs('admin.security-events*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">shield</span> Security Events
+        </a>
+        <a href="{{ route('admin.permissions') }}" class="rp-sidebar-link {{ request()->routeIs('admin.permissions*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">admin_panel_settings</span> Permissions
         </a>
         <hr class="mx-3 my-2">
-        <a href="{{ route('settings') }}" class="rp-sidebar-link">
-            <span class="material-symbols-outlined">settings</span>
-            Settings
+        <a href="{{ route('privacy.index') }}" class="rp-sidebar-link {{ request()->routeIs('privacy.*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">policy</span> Privacy
+        </a>
+        <a href="{{ route('settings') }}" class="rp-sidebar-link {{ request()->routeIs('settings') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">settings</span> Settings
         </a>
     </div>
 </nav>

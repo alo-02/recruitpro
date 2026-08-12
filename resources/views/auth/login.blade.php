@@ -43,7 +43,7 @@
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <label class="form-label text-label-md text-muted-rp mb-0" for="login-password">Password</label>
-                        <a href="{{ route('password.reset') }}" class="text-label-md text-secondary-rp">Forgot Password?</a>
+                        <a href="{{ route('password.request') }}" class="text-label-md text-secondary-rp">Forgot Password?</a>
                     </div>
                     <div class="rp-input-icon">
                         <span class="material-symbols-outlined">lock</span>
@@ -72,17 +72,22 @@
                     <div class="row g-2">
                         <div class="col-6">
                             <label class="role-option w-100">
-                                <input type="radio" name="role" value="student" {{ old('role', 'student') === 'student' ? 'checked' : '' }}>
+                                <input type="radio" name="role" value="student" {{ old('role', 'student') === 'student' ? 'checked' : '' }} onchange="toggleCompanyField()">
                                 <span class="material-symbols-outlined me-1" style="font-size:20px;">school</span> Candidate
                             </label>
                         </div>
                         <div class="col-6">
                             <label class="role-option w-100">
-                                <input type="radio" name="role" value="recruiter" {{ old('role') === 'recruiter' ? 'checked' : '' }}>
+                                <input type="radio" name="role" value="recruiter" {{ old('role') === 'recruiter' ? 'checked' : '' }} onchange="toggleCompanyField()">
                                 <span class="material-symbols-outlined me-1" style="font-size:20px;">business_center</span> Recruiter
                             </label>
                         </div>
                     </div>
+                </div>
+
+                <div class="mb-3 {{ old('role') === 'recruiter' ? '' : 'd-none' }}" id="company-name-field">
+                    <label class="form-label text-label-md text-muted-rp" for="company_name">Company Name</label>
+                    <input type="text" name="company_name" id="company_name" class="form-control" value="{{ old('company_name') }}" placeholder="Acme Inc.">
                 </div>
 
                 <div class="mb-3">
@@ -117,9 +122,14 @@
 
 @push('scripts')
 <script>
-if (window.location.hash === '#signup' || {{ $errors->has('name') || $errors->has('role') ? 'true' : 'false' }}) {
+function toggleCompanyField() {
+    const isRecruiter = document.querySelector('input[name="role"]:checked')?.value === 'recruiter';
+    document.getElementById('company-name-field')?.classList.toggle('d-none', !isRecruiter);
+}
+if (window.location.hash === '#signup' || {{ $errors->has('name') || $errors->has('role') || $errors->has('company_name') ? 'true' : 'false' }}) {
     switchTab('signup');
 }
+toggleCompanyField();
 </script>
 @endpush
 @endsection
