@@ -68,6 +68,11 @@ class JobPosting extends Model
         return $this->hasMany(Application::class);
     }
 
+    public function screeningSessions(): HasMany
+    {
+        return $this->hasMany(ScreeningSession::class);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', JobStatus::Active)

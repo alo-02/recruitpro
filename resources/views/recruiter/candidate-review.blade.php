@@ -13,7 +13,7 @@
     <div class="col-md-6 col-xl-4">
         <div class="rp-card rp-card-lg h-100">
             <div class="d-flex gap-3 mb-3">
-                <img src="{{ $app->applicant->profile?->avatarUrl() }}" class="rounded-circle" width="48" height="48" alt="">
+                <img src="{{ $app->applicant->avatarUrl() }}" class="rp-avatar rounded-circle" width="48" height="48" alt="">
                 <div>
                     <div class="fw-semibold">{{ $app->applicant->name }}</div>
                     <div class="text-muted-rp text-label-md">{{ $app->jobPosting->title }}</div>

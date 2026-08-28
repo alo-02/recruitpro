@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -159,5 +160,24 @@ class User extends Authenticatable implements MustVerifyEmail
     public function dashboardRoute(): string
     {
         return $this->role->dashboardRoute();
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        VerifyEmailNotification::issueCode($this);
+        $this->notify(new VerifyEmailNotification);
+    }
+
+    public function avatarUrl(): string
+    {
+        $this->loadMissing('profile');
+
+        return $this->profile?->avatarUrl()
+            ?? 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=0051d5&color=fff';
+    }
+
+    public function screeningSessions(): HasMany
+    {
+        return $this->hasMany(ScreeningSession::class, 'recruiter_id');
     }
 }

@@ -14,7 +14,7 @@
         <div class="rp-card rp-card-lg mb-4">
             <h2 class="text-title-lg mb-3">Candidate</h2>
             <div class="d-flex gap-3 align-items-center mb-3">
-                <img src="{{ $application->applicant->profile?->avatarUrl() ?? 'https://ui-avatars.com/api/?name='.urlencode($application->applicant->name) }}" class="rounded-circle" width="56" height="56" alt="">
+                <img src="{{ $application->applicant->avatarUrl() }}" class="rp-avatar rounded-circle" width="56" height="56" alt="">
                 <div>
                     <div class="fw-semibold">{{ $application->applicant->name }}</div>
                     <div class="text-muted-rp">{{ $application->applicant->profile?->headline }}</div>

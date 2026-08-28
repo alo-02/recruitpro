@@ -69,6 +69,12 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($profile->resume_path);
             }
             $data['resume_path'] = $request->file('resume')->store('resumes', 'public');
+            $check = $this->resumeExtractor->validateUploadedPath($data['resume_path']);
+            if (! $check['valid']) {
+                Storage::disk('public')->delete($data['resume_path']);
+
+                return back()->withErrors(['resume' => $check['error']])->withInput();
+            }
             $data['resume_text'] = $this->resumeExtractor->fromStoragePath($data['resume_path']);
         }
 

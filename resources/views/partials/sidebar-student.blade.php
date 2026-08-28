@@ -10,6 +10,10 @@
     </div>
 
     <div class="flex-grow-1 overflow-auto py-2">
+        <a href="{{ route('home') }}" class="rp-sidebar-link {{ request()->routeIs('home') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">home</span>
+            Home
+        </a>
         <a href="{{ route('student.dashboard') }}" class="rp-sidebar-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
             <span class="material-symbols-outlined {{ request()->routeIs('student.dashboard') ? 'icon-fill' : '' }}">dashboard</span>
             Dashboard
@@ -33,10 +37,6 @@
         <a href="{{ route('offers.index') }}" class="rp-sidebar-link {{ request()->routeIs('offers.*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">handshake</span>
             Offers
-        </a>
-        <a href="{{ route('blog.index') }}" class="rp-sidebar-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">article</span>
-            Blog
         </a>
         <a href="{{ route('applications.index') }}" class="rp-sidebar-link {{ request()->routeIs('applications.*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">description</span>

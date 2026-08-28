@@ -24,4 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/email/verification-notification', [AuthController::class, 'resendVerification'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+    Route::post('/email/verify-code', [AuthController::class, 'verifyWithCode'])
+        ->middleware('throttle:6,1')
+        ->name('verification.code');
 });

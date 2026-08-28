@@ -16,9 +16,15 @@ function initSearchForm() {
         e.preventDefault();
         const keyword = document.getElementById('search-keyword')?.value || '';
         const location = document.getElementById('search-location')?.value || '';
+        const category = document.getElementById('search-category')?.value || '';
+        const jobType = document.getElementById('search-type')?.value || '';
+        const mode = document.getElementById('search-mode')?.value || '';
         const params = new URLSearchParams();
         if (keyword) params.set('q', keyword);
         if (location) params.set('location', location);
+        if (category) params.append('category[]', category);
+        if (jobType) params.append('job_type[]', jobType);
+        if (mode) params.append('location_type[]', mode);
         window.location.href = '/jobs?' + params.toString();
     });
 }

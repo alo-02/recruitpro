@@ -56,7 +56,7 @@
             <h2 class="text-title-lg text-primary-rp mb-3">Upcoming Interviews</h2>
             @forelse($upcomingInterviews as $interview)
             <div class="d-flex align-items-center gap-3 py-3 border-bottom">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode($interview->candidate->name) }}&background=0051d5&color=fff" class="rounded-circle" width="40" height="40" alt="">
+                <img src="{{ $interview->candidate->avatarUrl() }}" class="rp-avatar rounded-circle" width="40" height="40" alt="{{ $interview->candidate->name }}">
                 <div>
                     <div class="text-body-md fw-semibold">{{ $interview->candidate->name }}</div>
                     <div class="text-body-md text-muted-rp">{{ $interview->application->jobPosting->title }} · {{ $interview->scheduled_at->format('M d, g:i A') }}</div>
@@ -76,7 +76,14 @@
                     <div class="text-body-md fw-semibold">{{ $job->title }}</div>
                     <div class="text-body-md text-muted-rp">{{ $job->applications_count }} applicants</div>
                 </div>
-                <a href="{{ route('jobs.manage') }}" class="btn btn-rp-outline btn-sm">Manage</a>
+                <div class="d-flex gap-2">
+                    <form method="POST" action="{{ route('screening.store', $job) }}">
+                        @csrf
+                        <input type="hidden" name="top_n" value="10">
+                        <button class="btn btn-rp-primary btn-sm" @disabled($job->applications_count < 1)>Start AI Screening</button>
+                    </form>
+                    <a href="{{ route('jobs.manage') }}" class="btn btn-rp-outline btn-sm">Manage</a>
+                </div>
             </div>
             @empty
             <p class="text-body-md text-muted-rp">No active jobs. <a href="{{ route('jobs.post') }}">Post one</a></p>

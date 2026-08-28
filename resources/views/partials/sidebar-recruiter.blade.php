@@ -19,6 +19,9 @@
         <a href="{{ route('recruiter.applications') }}" class="rp-sidebar-link {{ request()->routeIs('recruiter.applications') || request()->routeIs('applications.show') ? 'active' : '' }}">
             <span class="material-symbols-outlined">description</span> Applications
         </a>
+        <a href="{{ route('screening.index') }}" class="rp-sidebar-link {{ request()->routeIs('screening.*') ? 'active' : '' }}">
+            <span class="material-symbols-outlined">psychology</span> AI Screening
+        </a>
         <a href="{{ route('interviews.index') }}" class="rp-sidebar-link {{ request()->routeIs('interviews.*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">event</span> Interviews
         </a>
@@ -30,15 +33,6 @@
         </a>
         <a href="{{ route('offers.index') }}" class="rp-sidebar-link {{ request()->routeIs('offers.*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">handshake</span> Offers
-        </a>
-        <a href="{{ route('team.index') }}" class="rp-sidebar-link {{ request()->routeIs('team.*') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">groups</span> Team
-        </a>
-        <a href="{{ route('stages.index') }}" class="rp-sidebar-link {{ request()->routeIs('stages.*') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">view_kanban</span> Stages
-        </a>
-        <a href="{{ route('candidates.review') }}" class="rp-sidebar-link {{ request()->routeIs('candidates.review') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">rate_review</span> Review
         </a>
         <a href="{{ route('company.profile') }}" class="rp-sidebar-link {{ request()->routeIs('company.*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">apartment</span> Company

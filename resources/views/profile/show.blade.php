@@ -13,7 +13,7 @@
     <div class="col-lg-8">
         <div class="rp-card rp-card-lg mb-4">
             <div class="d-flex gap-3 align-items-center mb-4">
-                <img src="{{ $user->profile?->avatarUrl() }}" class="rounded-circle" width="72" height="72" alt="">
+                <img src="{{ $user->avatarUrl() }}" class="rp-avatar rounded-circle" width="72" height="72" alt="">
                 <div>
                     <div class="fw-semibold">{{ $user->email }}</div>
                     <div class="text-muted-rp">{{ $user->profile?->location }} · {{ $user->profile?->phone }}</div>

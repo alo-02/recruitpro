@@ -433,16 +433,74 @@ body {
     padding-left: 2.5rem;
 }
 
-/* Filter sidebar */
+/* Filter sidebar — keep the full filter form visible */
 .filter-sidebar {
     width: 256px;
+    flex-shrink: 0;
     border-right: 1px solid var(--rp-outline-variant);
     background: var(--rp-surface);
-    padding: 1.5rem;
+    padding: 0 1.5rem 1.5rem 0;
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    overflow-x: visible;
+}
+
+.home-job-filters {
+    max-width: 1080px;
+    overflow: visible;
+}
+
+.rp-avatar {
+    object-fit: cover;
+    object-position: center;
+    background: #e2e8f0;
+    flex-shrink: 0;
+}
+
+.rp-dashboard-topbar {
     position: sticky;
     top: 0;
-    height: 100vh;
-    overflow-y: auto;
+    margin-left: 0;
+    background: #fff;
+}
+
+.job-search-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+@media (min-width: 768px) {
+    .job-search-layout {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .filter-sidebar {
+        width: 256px;
+    }
+
+    .job-search-results {
+        flex: 1;
+        min-width: 0;
+        padding-left: 1.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .filter-sidebar {
+        width: 100%;
+        max-height: none;
+        position: relative;
+        top: 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--rp-outline-variant);
+        padding: 0 0 1.5rem 0;
+        overflow: visible;
+    }
 }
 
 /* Job card */

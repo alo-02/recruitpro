@@ -71,6 +71,11 @@ class Application extends Model
         return $this->hasMany(JobOffer::class);
     }
 
+    public function screeningResults(): HasMany
+    {
+        return $this->hasMany(ScreeningResult::class);
+    }
+
     public function isWithdrawn(): bool
     {
         return $this->status === ApplicationStatus::Withdrawn;

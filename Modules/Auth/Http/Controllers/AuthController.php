@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -207,6 +208,30 @@ class AuthController extends Controller
 
         $request->user()->sendEmailVerificationNotification();
 
-        return back()->with('success', 'Verification link sent!');
+        return back()->with('success', 'Verification link and 6-digit code sent. Check your Gmail inbox and spam folder.');
+    }
+
+    public function verifyWithCode(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'code' => ['required', 'digits:6'],
+        ]);
+
+        $user = $request->user();
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route($user->dashboardRoute());
+        }
+
+        $expected = Cache::get('email-verify-code:'.$user->id);
+        if (! is_string($expected) || ! hash_equals($expected, $request->code)) {
+            return back()->withErrors(['code' => 'That verification code is invalid or has expired.']);
+        }
+
+        $user->markEmailAsVerified();
+        Cache::forget('email-verify-code:'.$user->id);
+        ActivityLogger::log('user.email_verified', $user);
+
+        return redirect()->route($user->dashboardRoute())
+            ->with('success', 'Email verified successfully!');
     }
 }

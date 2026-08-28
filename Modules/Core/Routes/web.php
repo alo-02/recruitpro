@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\MediaController;
 use Illuminate\Support\Facades\Route;
 use Modules\Core\Http\Controllers\DashboardController;
 
 Route::get('/', [DashboardController::class, 'home'])->name('home');
+Route::get('/media/{path}', [MediaController::class, 'show'])->where('path', '.*')->name('media.show');
 
 Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
     Route::get('/student/dashboard', [DashboardController::class, 'student'])->name('student.dashboard');

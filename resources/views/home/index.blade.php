@@ -4,7 +4,7 @@
 
 @section('content')
 {{-- Hero --}}
-<section class="hero-pattern py-5 text-center position-relative overflow-hidden">
+<section class="hero-pattern py-5 text-center position-relative">
     <div class="container-rp mx-auto px-3 position-relative" style="z-index:10;">
         <h1 class="text-display-lg text-primary-rp mb-3">
             Bridge the Gap Between <span class="text-secondary-rp">Talent</span> and <span class="text-secondary-rp">Opportunity</span>
@@ -13,21 +13,50 @@
             Discover your next career move or find the perfect candidate to scale your enterprise. RecruitPro connects ambition with industry-leading roles.
         </p>
 
-        <form id="hero-search-form" class="glass-card p-2 mx-auto" style="max-width:768px;">
-            <div class="row g-2 align-items-center">
-                <div class="col-md-5">
+        <form method="GET" action="{{ route('jobs.index') }}" class="home-job-filters glass-card p-3 p-md-4 mx-auto text-start">
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <label class="form-label text-label-md text-muted-rp mb-1" for="search-keyword">Keyword</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><span class="material-symbols-outlined text-muted-rp">search</span></span>
-                        <input type="text" id="search-keyword" class="form-control border-start-0" placeholder="Job Title, Keyword, or Company">
+                        <span class="input-group-text bg-white"><span class="material-symbols-outlined text-muted-rp">search</span></span>
+                        <input type="text" name="q" id="search-keyword" class="form-control" placeholder="Job title, keyword, or company" value="{{ request('q') }}">
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <label class="form-label text-label-md text-muted-rp mb-1" for="search-location">Location</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><span class="material-symbols-outlined text-muted-rp">location_on</span></span>
-                        <input type="text" id="search-location" class="form-control border-start-0" placeholder="Location or Remote">
+                        <span class="input-group-text bg-white"><span class="material-symbols-outlined text-muted-rp">location_on</span></span>
+                        <input type="text" name="location" id="search-location" class="form-control" placeholder="City or remote" value="{{ request('location') }}">
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-12 col-md-4 col-lg-2">
+                    <label class="form-label text-label-md text-muted-rp mb-1" for="search-category">Category</label>
+                    <select name="category[]" id="search-category" class="form-select">
+                        <option value="">All categories</option>
+                        @foreach(\App\Enums\JobCategory::options() as $cat)
+                            <option value="{{ $cat['value'] }}" @selected(in_array($cat['value'], (array) request('category'), true))>{{ $cat['label'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 col-lg-2">
+                    <label class="form-label text-label-md text-muted-rp mb-1" for="search-type">Job type</label>
+                    <select name="job_type[]" id="search-type" class="form-select">
+                        <option value="">All types</option>
+                        <option value="full-time" @selected(in_array('full-time', (array) request('job_type'), true))>Full-time</option>
+                        <option value="contract" @selected(in_array('contract', (array) request('job_type'), true))>Contract</option>
+                        <option value="internship" @selected(in_array('internship', (array) request('job_type'), true))>Internship</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 col-lg-3">
+                    <label class="form-label text-label-md text-muted-rp mb-1" for="search-mode">Work mode</label>
+                    <select name="location_type[]" id="search-mode" class="form-select">
+                        <option value="">Any mode</option>
+                        <option value="remote" @selected(in_array('remote', (array) request('location_type'), true))>Remote</option>
+                        <option value="hybrid" @selected(in_array('hybrid', (array) request('location_type'), true))>Hybrid</option>
+                        <option value="onsite" @selected(in_array('onsite', (array) request('location_type'), true))>On-site</option>
+                    </select>
+                </div>
+                <div class="col-12 col-lg-3">
                     <button type="submit" class="btn btn-rp-primary w-100">Find Jobs</button>
                 </div>
             </div>

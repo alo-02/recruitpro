@@ -5,6 +5,9 @@
         <nav class="d-none d-md-flex gap-4 h-100">
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
             <a href="{{ route('jobs.index') }}" class="nav-link {{ request()->routeIs('jobs.index', 'jobs.show') ? 'active' : '' }}">Search</a>
+            @auth
+                <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="nav-link {{ request()->routeIs('student.dashboard', 'recruiter.dashboard', 'admin.index') ? 'active' : '' }}">Dashboard</a>
+            @endauth
         </nav>
 
         <div class="d-flex align-items-center gap-3">

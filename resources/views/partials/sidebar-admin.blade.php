@@ -28,15 +28,6 @@
         <a href="{{ route('admin.analytics') }}" class="rp-sidebar-link {{ request()->routeIs('admin.analytics') ? 'active' : '' }}">
             <span class="material-symbols-outlined">monitoring</span> Analytics
         </a>
-        <a href="{{ route('admin.cms') }}" class="rp-sidebar-link {{ request()->routeIs('admin.cms*') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">article</span> CMS
-        </a>
-        <a href="{{ route('admin.plans') }}" class="rp-sidebar-link {{ request()->routeIs('admin.plans*') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">workspace_premium</span> Plans
-        </a>
-        <a href="{{ route('admin.flags') }}" class="rp-sidebar-link {{ request()->routeIs('admin.flags*') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">toggle_on</span> Feature Flags
-        </a>
         <a href="{{ route('admin.abuse') }}" class="rp-sidebar-link {{ request()->routeIs('admin.abuse*') ? 'active' : '' }}">
             <span class="material-symbols-outlined">report</span> Abuse Reports
         </a>

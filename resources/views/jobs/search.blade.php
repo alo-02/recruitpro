@@ -3,8 +3,8 @@
 @section('title', 'Search Jobs')
 
 @section('content')
-<div class="d-flex">
-    <aside class="filter-sidebar d-none d-md-block">
+<div class="job-search-layout">
+    <aside class="filter-sidebar">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-title-lg mb-0">Filters</h2>
             <a href="{{ route('jobs.index') }}" class="btn btn-link text-secondary-rp text-label-md p-0">Clear All</a>
@@ -56,7 +56,7 @@
         </form>
     </aside>
 
-    <div class="flex-grow-1 ps-md-4">
+    <div class="job-search-results">
         <div class="mb-4">
             <h1 class="text-headline-md text-primary-rp mb-1">Search Internships & Jobs</h1>
             <p class="text-body-md text-muted-rp mb-3">{{ $jobs->total() }} jobs found</p>

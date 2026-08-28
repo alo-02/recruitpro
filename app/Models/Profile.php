@@ -39,11 +39,13 @@ class Profile extends Model
 
     public function avatarUrl(): string
     {
-        if ($this->avatar_path) {
-            return Storage::disk('public')->url($this->avatar_path);
+        if ($this->avatar_path && Storage::disk('public')->exists($this->avatar_path)) {
+            return url('/media/'.$this->avatar_path);
         }
 
-        return 'https://ui-avatars.com/api/?name='.urlencode($this->user->name ?? 'User').'&background=0051d5&color=fff';
+        $name = $this->relationLoaded('user') ? ($this->user?->name ?? 'User') : ($this->user()->value('name') ?? 'User');
+
+        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&background=0051d5&color=fff';
     }
 
     /**

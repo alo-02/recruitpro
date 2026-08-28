@@ -95,7 +95,7 @@ class DashboardController extends Controller
             });
 
         $upcomingInterviews = $user->interviewsAsRecruiter()
-            ->with(['candidate', 'application.jobPosting'])
+            ->with(['candidate.profile', 'application.jobPosting'])
             ->where('scheduled_at', '>=', now())
             ->orderBy('scheduled_at')
             ->take(5)

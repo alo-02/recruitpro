@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Applications\Http\Controllers\ApplicationController;
+use Modules\Applications\Http\Controllers\ScreeningController;
 
 Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
     Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
@@ -25,4 +26,13 @@ Route::get('/applications/{application}/resume/signed', [ApplicationController::
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
+});
+
+Route::middleware(['auth', 'verified', 'role:recruiter,admin', 'permission:applications.review'])->group(function () {
+    Route::get('/recruiter/screening', [ScreeningController::class, 'index'])->name('screening.index');
+    Route::post('/jobs/{job}/screening', [ScreeningController::class, 'store'])->name('screening.store');
+    Route::get('/recruiter/screening/{session}', [ScreeningController::class, 'show'])->name('screening.show');
+    Route::get('/recruiter/screening/{session}/candidates/{result}', [ScreeningController::class, 'candidate'])->name('screening.candidate');
+    Route::post('/recruiter/screening/{session}/candidates/{result}/decision', [ScreeningController::class, 'decide'])->name('screening.decide');
+    Route::post('/recruiter/screening/{session}/candidates/{result}/interview', [ScreeningController::class, 'pushToInterview'])->name('screening.interview');
 });

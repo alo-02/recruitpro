@@ -16,21 +16,28 @@
     @stack('styles')
 </head>
 <body class="@yield('body-class')">
-    {{-- Mobile header --}}
-    <header class="rp-navbar d-lg-none px-3">
-        <div class="d-flex justify-content-between align-items-center w-100">
-            <a href="{{ route('home') }}" class="rp-brand">RecruitPro</a>
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-link p-0 text-secondary-rp"><span class="material-symbols-outlined">search</span></button>
-                <button class="btn btn-link p-0 text-muted-rp"><span class="material-symbols-outlined">notifications</span></button>
-                <img src="https://ui-avatars.com/api/?name=User&background=0051d5&color=fff" class="rounded-circle" width="32" height="32" alt="Avatar">
-            </div>
-        </div>
-    </header>
-
     @include('partials.sidebar-' . ($sidebar ?? 'student'))
 
     <div class="rp-main-content has-bottom-nav">
+        <header class="rp-navbar rp-dashboard-topbar px-3 px-lg-4">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="{{ route('home') }}" class="rp-brand d-lg-none">RecruitPro</a>
+                <nav class="d-flex align-items-center gap-3 gap-md-4">
+                    <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+                    @auth
+                        <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="nav-link {{ request()->routeIs('student.dashboard', 'recruiter.dashboard', 'admin.index') ? 'active' : '' }}">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="nav-link">Dashboard</a>
+                    @endauth
+                </nav>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="{{ route('jobs.index') }}" class="btn btn-link p-0 text-secondary-rp d-none d-md-inline text-label-md text-decoration-none">Find Jobs</a>
+                    @auth
+                        <img src="{{ auth()->user()->avatarUrl() }}" class="rp-avatar rounded-circle" width="32" height="32" alt="{{ auth()->user()->name }}">
+                    @endauth
+                </div>
+            </div>
+        </header>
         <div class="p-3 p-lg-4">
             @include('partials.flash')
             @yield('content')

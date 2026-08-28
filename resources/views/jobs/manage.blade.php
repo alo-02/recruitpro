@@ -43,6 +43,13 @@
                     <td><span class="badge {{ $job->moderation_status->badgeClass() }}">{{ $job->moderation_status->label() }}</span></td>
                     <td class="text-body-md text-muted-rp">{{ $job->deadline?->format('M d, Y') ?? '—' }}</td>
                     <td class="text-nowrap">
+                        @if($job->status->value === 'active')
+                        <form action="{{ route('screening.store', $job) }}" method="POST" class="d-inline">
+                            @csrf
+                            <input type="hidden" name="top_n" value="10">
+                            <button class="btn btn-rp-primary btn-sm" @disabled($job->applications_count < 1)>Start AI Screening</button>
+                        </form>
+                        @endif
                         <a href="{{ route('jobs.edit', $job) }}" class="btn btn-rp-outline btn-sm">Edit</a>
                         @if($job->status->value === 'active')
                         <form action="{{ route('jobs.close', $job) }}" method="POST" class="d-inline">

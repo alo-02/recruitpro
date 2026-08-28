@@ -109,13 +109,6 @@
                 </div>
                 <button type="submit" class="btn btn-rp-primary w-100 py-2">Create Account</button>
             </form>
-
-            <div class="mt-4 p-3 bg-surface-container-low rounded">
-                <p class="text-label-md text-muted-rp mb-2">Demo Accounts</p>
-                <p class="text-body-md mb-1"><strong>Student:</strong> student@recruitpro.com</p>
-                <p class="text-body-md mb-1"><strong>Recruiter:</strong> recruiter@recruitpro.com</p>
-                <p class="text-body-md mb-0"><strong>Admin:</strong> admin@recruitpro.com / password</p>
-            </div>
         </div>
     </div>
 </div>

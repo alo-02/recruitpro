@@ -8,20 +8,56 @@ use Throwable;
 
 class ResumeTextExtractor
 {
+    public const ALLOWED_EXTENSIONS = ['pdf', 'docx', 'doc', 'txt'];
+
+    /**
+     * @return array{valid:bool,extension:string,error:?string}
+     */
+    public function validateUploadedPath(?string $path, string $disk = 'public'): array
+    {
+        if (! $path) {
+            return ['valid' => false, 'extension' => '', 'error' => 'No resume file was uploaded.'];
+        }
+
+        if (! Storage::disk($disk)->exists($path)) {
+            return ['valid' => false, 'extension' => '', 'error' => 'Resume file could not be found.'];
+        }
+
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        if (! in_array($extension, self::ALLOWED_EXTENSIONS, true)) {
+            return ['valid' => false, 'extension' => $extension, 'error' => 'Resume must be a PDF or Word document.'];
+        }
+
+        $absolute = Storage::disk($disk)->path($path);
+        $size = @filesize($absolute) ?: 0;
+        if ($size < 64) {
+            return ['valid' => false, 'extension' => $extension, 'error' => 'Resume file is empty or unreadable.'];
+        }
+
+        if ($extension === 'pdf') {
+            $header = (string) @file_get_contents($absolute, false, null, 0, 5);
+            if (! str_starts_with($header, '%PDF')) {
+                return ['valid' => false, 'extension' => $extension, 'error' => 'File is not a valid PDF resume.'];
+            }
+        }
+
+        return ['valid' => true, 'extension' => $extension, 'error' => null];
+    }
+
     public function fromStoragePath(?string $path, string $disk = 'public'): string
     {
-        if (! $path || ! Storage::disk($disk)->exists($path)) {
+        $check = $this->validateUploadedPath($path, $disk);
+        if (! $check['valid']) {
             return '';
         }
 
         $absolute = Storage::disk($disk)->path($path);
-        $extension = strtolower(pathinfo($absolute, PATHINFO_EXTENSION));
 
         try {
-            return match ($extension) {
+            return match ($check['extension']) {
                 'pdf' => $this->fromPdf($absolute),
                 'docx' => $this->fromDocx($absolute),
-                'doc', 'txt' => (string) @file_get_contents($absolute),
+                'doc', 'txt' => trim((string) @file_get_contents($absolute)),
                 default => '',
             };
         } catch (Throwable) {

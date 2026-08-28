@@ -199,30 +199,24 @@ class AdminController extends Controller
 
     public function reports(): View
     {
-        $byStatus = Application::selectRaw('status, count(*) as total')
+        $byStatus = Application::query()
+            ->selectRaw('status, count(*) as total')
             ->groupBy('status')
-            ->pluck('total', 'status');
+            ->get()
+            ->mapWithKeys(function ($row) {
+                $status = $row->status;
+                $key = is_object($status) ? $status->value : (string) $status;
 
-        $byJobType = JobPosting::selectRaw('type, count(*) as total')
+                return [$key => $row->total];
+            });
+
+        $byJobType = JobPosting::query()
+            ->selectRaw('type, count(*) as total')
             ->groupBy('type')
-            ->pluck('total', 'type');
+            ->get()
+            ->mapWithKeys(fn ($row) => [(string) $row->type => $row->total]);
 
-        $monthlyApplications = Application::selectRaw("strftime('%Y-%m', applied_at) as month, count(*) as total")
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('total', 'month');
-
-        // MySQL fallback if not sqlite
-        if ($monthlyApplications->isEmpty()) {
-            try {
-                $monthlyApplications = Application::selectRaw("DATE_FORMAT(applied_at, '%Y-%m') as month, count(*) as total")
-                    ->groupBy('month')
-                    ->orderBy('month')
-                    ->pluck('total', 'month');
-            } catch (\Throwable) {
-                $monthlyApplications = collect();
-            }
-        }
+        $monthlyApplications = $this->monthlyApplicationCounts();
 
         $stats = [
             'users' => User::count(),
@@ -278,13 +272,31 @@ class AdminController extends Controller
             'generated_at' => now()->format('M d, Y g:i A'),
         ];
 
-        $byStatus = Application::selectRaw('status, count(*) as total')
+        $byStatus = Application::query()
+            ->selectRaw('status, count(*) as total')
             ->groupBy('status')
-            ->get();
+            ->get()
+            ->map(function ($row) {
+                $status = $row->status;
 
-        $byCategory = JobPosting::selectRaw('category, count(*) as total')
+                return (object) [
+                    'status' => is_object($status) ? $status->value : (string) $status,
+                    'total' => $row->total,
+                ];
+            });
+
+        $byCategory = JobPosting::query()
+            ->selectRaw('category, count(*) as total')
             ->groupBy('category')
-            ->get();
+            ->get()
+            ->map(function ($row) {
+                $category = $row->category;
+
+                return (object) [
+                    'category' => is_object($category) ? ($category->value ?? $category->label()) : (string) $category,
+                    'total' => $row->total,
+                ];
+            });
 
         $pdf = Pdf::loadView('admin.report-pdf', compact('stats', 'byStatus', 'byCategory'))
             ->setPaper('a4');
@@ -333,5 +345,30 @@ class AdminController extends Controller
         ActivityLogger::log('admin.security_event_resolved', $event);
 
         return back()->with('success', 'Security event marked resolved.');
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<string, int>
+     */
+    protected function monthlyApplicationCounts(): \Illuminate\Support\Collection
+    {
+        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+        $expr = match ($driver) {
+            'sqlite' => "strftime('%Y-%m', applied_at)",
+            'pgsql' => "to_char(applied_at, 'YYYY-MM')",
+            default => "DATE_FORMAT(applied_at, '%Y-%m')",
+        };
+
+        try {
+            return Application::query()
+                ->selectRaw("{$expr} as month, count(*) as total")
+                ->whereNotNull('applied_at')
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get()
+                ->mapWithKeys(fn ($row) => [(string) $row->month => (int) $row->total]);
+        } catch (\Throwable) {
+            return collect();
+        }
     }
 }

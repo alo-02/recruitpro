@@ -22,7 +22,7 @@
     <div class="col-md-6 col-lg-4">
         <div class="rp-card rp-card-md h-100">
             <div class="d-flex align-items-start gap-3 mb-3">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode($candidate->name) }}&background=0051d5&color=fff" class="rounded-circle" width="48" height="48" alt="">
+                <img src="{{ $candidate->avatarUrl() }}" class="rp-avatar rounded-circle" width="48" height="48" alt="{{ $candidate->name }}">
                 <div class="flex-grow-1">
                     <h3 class="text-title-lg text-primary-rp mb-0">{{ $candidate->name }}</h3>
                     <p class="text-body-md text-muted-rp mb-0">{{ $candidate->profile?->headline ?? 'No headline' }}</p>

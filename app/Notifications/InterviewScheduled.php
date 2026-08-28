@@ -3,15 +3,11 @@
 namespace App\Notifications;
 
 use App\Models\Interview;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InterviewScheduled extends Notification implements ShouldQueue
+class InterviewScheduled extends Notification
 {
-    use Queueable;
-
     public function __construct(public Interview $interview) {}
 
     public function via(object $notifiable): array
@@ -21,15 +17,28 @@ class InterviewScheduled extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject('Interview scheduled')
+        $jobTitle = $this->interview->application?->jobPosting?->title ?? 'your application';
+        $when = $this->interview->scheduled_at?->format('l, M d, Y g:i A') ?? 'TBD';
+        $mode = ucfirst((string) $this->interview->mode);
+
+        $mail = (new MailMessage)
+            ->subject('Interview scheduled: '.$jobTitle)
             ->greeting('Hello '.$notifiable->name.',')
-            ->line('An interview has been scheduled for '.$this->interview->application->jobPosting->title.'.')
-            ->line('When: '.$this->interview->scheduled_at->format('M d, Y g:i A'))
-            ->line('Mode: '.ucfirst($this->interview->mode))
-            ->when($this->interview->location_or_link, fn ($m) => $m->line('Location / Link: '.$this->interview->location_or_link))
+            ->line('An interview has been scheduled for '.$jobTitle.'.')
+            ->line('When: '.$when)
+            ->line('Mode: '.$mode);
+
+        if ($this->interview->location_or_link) {
+            $mail->line('Location / meeting link: '.$this->interview->location_or_link);
+        }
+
+        if ($this->interview->notes) {
+            $mail->line('Notes: '.$this->interview->notes);
+        }
+
+        return $mail
             ->action('View Interviews', url('/interviews'))
-            ->line('Good luck!');
+            ->line('Please reply if you need to reschedule. Good luck!');
     }
 
     public function toArray(object $notifiable): array
@@ -37,8 +46,8 @@ class InterviewScheduled extends Notification implements ShouldQueue
         return [
             'type' => 'interview_scheduled',
             'interview_id' => $this->interview->id,
-            'scheduled_at' => $this->interview->scheduled_at->toIso8601String(),
-            'message' => 'Interview scheduled for '.$this->interview->scheduled_at->format('M d, Y g:i A'),
+            'scheduled_at' => $this->interview->scheduled_at?->toIso8601String(),
+            'message' => 'Interview scheduled for '.$this->interview->scheduled_at?->format('M d, Y g:i A'),
         ];
     }
 }

@@ -17,7 +17,10 @@
                 <div class="row g-3 mb-4">
                     <div class="col-12">
                         <label class="form-label text-label-md text-muted-rp">Profile Photo</label>
-                        <input type="file" name="avatar" class="form-control" accept="image/*">
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="{{ $profile->avatarUrl() }}" class="rp-avatar rounded-circle" width="64" height="64" alt="Current photo">
+                            <input type="file" name="avatar" class="form-control" accept="image/*">
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label text-label-md text-muted-rp">Full Name</label>
@@ -125,7 +128,7 @@
     <div class="col-lg-4">
         <div class="rp-card rp-card-lg position-sticky" style="top:80px;">
             <div class="text-center mb-4">
-                <img src="{{ $profile->avatarUrl() }}" class="rounded-circle mb-3" width="96" height="96" alt="Profile">
+                <img src="{{ $profile->avatarUrl() }}" class="rp-avatar rounded-circle mb-3" width="96" height="96" alt="Profile">
                 <h3 class="text-title-lg text-primary-rp">{{ $user->name }}</h3>
                 <p class="text-body-md text-muted-rp">{{ $profile->headline ?? 'Add a headline' }}</p>
             </div>

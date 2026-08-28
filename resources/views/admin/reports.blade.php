@@ -53,4 +53,16 @@
         </div>
     </div>
 </div>
+
+@if(isset($monthlyApplications) && $monthlyApplications->isNotEmpty())
+<div class="rp-card rp-card-lg mt-4">
+    <h2 class="text-title-lg mb-3">Applications by Month</h2>
+    @foreach($monthlyApplications as $month => $total)
+        <div class="d-flex justify-content-between border-bottom py-2">
+            <span>{{ $month }}</span>
+            <strong>{{ $total }}</strong>
+        </div>
+    @endforeach
+</div>
+@endif
 @endsection
