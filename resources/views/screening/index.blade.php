@@ -21,7 +21,8 @@
                 <label class="form-label text-label-md">Active job</label>
                 <select name="job_slug" id="screening-job" class="form-select" required>
                     @foreach($jobs as $job)
-                        <option value="{{ $job->slug }}" data-action="{{ route('screening.store', $job) }}">
+                        @continue(! $job->slug)
+                        <option value="{{ $job->slug }}" data-action="{{ route('screening.store', ['job' => $job->slug]) }}">
                             {{ $job->title }} ({{ $job->applications_count }} applicants)
                         </option>
                     @endforeach

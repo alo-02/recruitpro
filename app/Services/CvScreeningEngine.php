@@ -58,7 +58,11 @@ class CvScreeningEngine
 
         $evaluated = [];
         foreach ($applications as $application) {
-            $evaluated[] = $this->scoreApplication($application, $job, $requirements);
+            try {
+                $evaluated[] = $this->scoreApplication($application, $job, $requirements);
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
 
         usort($evaluated, fn ($a, $b) => $b['overall_score'] <=> $a['overall_score']);
@@ -211,7 +215,7 @@ class CvScreeningEngine
         $levels = [
             'PhD' => ['phd', 'doctorate', 'ph.d'],
             "Master's" => ['master', 'msc', 'm.s', 'mba'],
-            "Bachelor's" => ['bachelor', 'bsc', 'b.s', 'b.eng', 'undergraduate', 'computer science'],
+            "Bachelor's" => ['bachelor', 'bsc', 'b.s', 'b.eng', 'undergraduate', 'computer science', 'mbbs', 'mbchb', 'bmdc'],
             'Diploma / Associate' => ['associate', 'diploma', 'a.s'],
         ];
 

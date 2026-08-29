@@ -108,6 +108,68 @@ class JobPosting extends Model
         return 'slug';
     }
 
+    /**
+     * Split recruiter-entered skills / ATS keywords into a clean list.
+     * Accepts commas, semicolons, newlines, or a long Title Case blob pasted without commas.
+     *
+     * @param  string|array<int, mixed>|null  $raw
+     * @return list<string>
+     */
+    public static function parseKeywordList(string|array|null $raw): array
+    {
+        $items = is_array($raw)
+            ? $raw
+            : (trim((string) $raw) === '' ? [] : preg_split('/[,;\n]+/', (string) $raw));
+
+        $out = [];
+        foreach ($items as $item) {
+            $item = trim((string) $item);
+            if ($item === '') {
+                continue;
+            }
+
+            foreach (self::expandKeywordBlob($item) as $piece) {
+                $piece = trim($piece);
+                if ($piece !== '') {
+                    $out[] = $piece;
+                }
+            }
+        }
+
+        return collect($out)
+            ->unique(fn ($value) => mb_strtolower($value))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected static function expandKeywordBlob(string $item): array
+    {
+        if (str_contains($item, ',') || str_contains($item, ';')) {
+            return preg_split('/[,;]+/', $item) ?: [$item];
+        }
+
+        $words = preg_split('/\s+/', $item) ?: [];
+        if (count($words) < 4 || mb_strlen($item) < 40) {
+            return [$item];
+        }
+
+        $titleCase = collect($words)->every(fn ($word) => (bool) preg_match('/^[\p{Lu}0-9]/u', $word));
+        if (! $titleCase) {
+            return [$item];
+        }
+
+        $pairs = [];
+        $count = count($words);
+        for ($i = 0; $i < $count; $i += 2) {
+            $pairs[] = trim($words[$i].' '.($words[$i + 1] ?? ''));
+        }
+
+        return array_values(array_filter($pairs));
+    }
+
     public function searchableAs(): string
     {
         return 'job_postings';

@@ -77,7 +77,7 @@
                     <div class="text-body-md text-muted-rp">{{ $job->applications_count }} applicants</div>
                 </div>
                 <div class="d-flex gap-2">
-                    <form method="POST" action="{{ route('screening.store', $job) }}">
+                    <form method="POST" action="{{ route('screening.store', ['job' => $job->slug]) }}">
                         @csrf
                         <input type="hidden" name="top_n" value="10">
                         <button class="btn btn-rp-primary btn-sm" @disabled($job->applications_count < 1)>Start AI Screening</button>

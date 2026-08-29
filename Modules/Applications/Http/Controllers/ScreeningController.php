@@ -59,6 +59,12 @@ class ScreeningController extends Controller
             'candidates' => $session->candidates_evaluated,
         ]);
 
+        if ($session->candidates_evaluated === 0) {
+            return redirect()
+                ->route('screening.show', $session)
+                ->with('error', 'Screening finished but no CVs could be scored. Confirm each applicant has a readable PDF or Word resume.');
+        }
+
         return redirect()
             ->route('screening.show', $session)
             ->with('success', "AI screening complete. {$session->candidates_evaluated} candidate(s) ranked. Review the list — nothing was auto-rejected.");

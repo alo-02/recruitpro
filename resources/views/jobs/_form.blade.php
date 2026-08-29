@@ -68,6 +68,7 @@
 <div class="mb-4">
     <label class="form-label text-label-md text-muted-rp">Required Skills</label>
     <input type="text" name="skills" class="form-control" value="{{ old('skills', $job ? implode(', ', $job->skills ?? []) : '') }}" placeholder="React, TypeScript, Python">
+    <div class="form-text">Separate each skill with a comma (e.g. Patient Care, Clinical Diagnosis).</div>
 </div>
 
 <div class="mb-4">

@@ -23,7 +23,7 @@ class UpdateJobPostingRequest extends FormRequest
             'salary_max' => ['nullable', 'string', 'max:50'],
             'description' => ['required', 'string', 'min:50'],
             'requirements' => ['nullable', 'string', 'max:5000'],
-            'skills' => ['nullable', 'string', 'max:500'],
+            'skills' => ['nullable', 'string', 'max:2000'],
             'ats_keywords' => ['required', 'string', 'max:1000'],
             'ats_min_score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'deadline' => ['nullable', 'date'],

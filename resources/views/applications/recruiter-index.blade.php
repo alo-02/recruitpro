@@ -8,8 +8,8 @@
         <h1 class="text-headline-md text-primary-rp mb-1">ATS CV Screening</h1>
         <p class="text-body-md text-muted-rp mb-0">Filter applicants by job keywords matched against profile + resume text.</p>
     </div>
-    @if($selectedJob)
-    <form method="POST" action="{{ route('jobs.ats-rescan', $selectedJob) }}">
+    @if($selectedJob && $selectedJob->slug)
+    <form method="POST" action="{{ route('jobs.ats-rescan', ['job' => $selectedJob->slug]) }}">
         @csrf
         <button class="btn btn-rp-outline">Re-scan all CVs for this job</button>
     </form>

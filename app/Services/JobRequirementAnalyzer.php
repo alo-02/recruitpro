@@ -28,8 +28,8 @@ class JobRequirementAnalyzer
         ])));
 
         $required = $this->uniqueList(array_merge(
-            $job->ats_keywords ?: [],
-            $job->skills ?: [],
+            JobPosting::parseKeywordList($job->ats_keywords),
+            JobPosting::parseKeywordList($job->skills),
             $this->extractListAfter($text, ['requirements', 'required', 'must have', 'must-have'])
         ));
 
@@ -57,7 +57,11 @@ class JobRequirementAnalyzer
     protected function extractListAfter(string $text, array $headings): array
     {
         $pattern = '/(?:'.implode('|', array_map(fn ($h) => preg_quote($h, '/'), $headings)).')\s*:?\s*([\s\S]{0,800}?)(?=\n[A-Z][A-Za-z ]{3,30}\s*:|\z)/iu';
-        if (! preg_match($pattern, $text, $match)) {
+        try {
+            if (! preg_match($pattern, $text, $match)) {
+                return [];
+            }
+        } catch (\Throwable) {
             return [];
         }
 
@@ -78,6 +82,9 @@ class JobRequirementAnalyzer
         }
         if (preg_match('/\b(master\'?s|msc|m\.s\.|mba)\b/iu', $text)) {
             return "Master's";
+        }
+        if (preg_match('/\b(mbbs|mbchb|bmdc|m\.?d\.)\b/iu', $text)) {
+            return "Bachelor's";
         }
         if (preg_match('/\b(bachelor\'?s|bsc|b\.s\.|b\.eng|undergraduate)\b/iu', $text)) {
             return "Bachelor's";

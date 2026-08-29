@@ -49,6 +49,48 @@ class CvScreeningTest extends TestCase
         }
     }
 
+    public function test_ai_screening_handles_structured_cv_headings_and_bullets(): void
+    {
+        [$recruiter, $job] = $this->makeJobWithApplicants(medicalCv: true);
+
+        $this->actingAs($recruiter)
+            ->post(route('screening.store', $job), ['top_n' => 10])
+            ->assertRedirect();
+
+        $session = ScreeningSession::first();
+        $this->assertNotNull($session);
+        $this->assertGreaterThan(0, $session->candidates_evaluated);
+        $this->assertNotEmpty($session->results()->first()?->ai_explanation);
+    }
+
+    public function test_ats_applications_page_loads_when_filtering_by_job(): void
+    {
+        [$recruiter, $job] = $this->makeJobWithApplicants();
+
+        $this->actingAs($recruiter)
+            ->get(route('recruiter.applications', [
+                'job_id' => $job->id,
+                'keyword' => '',
+                'min_score' => '',
+                'sort' => 'ats',
+                'status' => '',
+            ]))
+            ->assertOk()
+            ->assertSee('ATS CV Screening')
+            ->assertSee('Re-scan all CVs for this job');
+    }
+
+    public function test_space_separated_skill_blob_is_split_for_matching(): void
+    {
+        $list = JobPosting::parseKeywordList(
+            'Patient Care Clinical Diagnosis Medical Assessment Treatment Planning'
+        );
+
+        $this->assertContains('Patient Care', $list);
+        $this->assertContains('Clinical Diagnosis', $list);
+        $this->assertGreaterThanOrEqual(4, count($list));
+    }
+
     public function test_recruiter_can_override_ai_and_shortlist_without_rejecting_others(): void
     {
         [$recruiter, $job] = $this->makeJobWithApplicants();
@@ -139,7 +181,7 @@ class CvScreeningTest extends TestCase
     /**
      * @return array{0:User,1:JobPosting}
      */
-    protected function makeJobWithApplicants(): array
+    protected function makeJobWithApplicants(bool $medicalCv = false): array
     {
         $recruiter = User::factory()->create([
             'role' => UserRole::Recruiter,
@@ -147,33 +189,47 @@ class CvScreeningTest extends TestCase
         ]);
         $company = Company::create([
             'user_id' => $recruiter->id,
-            'name' => 'Nexus Labs',
-            'slug' => 'nexus-labs',
+            'name' => $medicalCv ? 'City Care Hospital' : 'Nexus Labs',
+            'slug' => $medicalCv ? 'city-care-hospital' : 'nexus-labs',
             'status' => CompanyStatus::Approved,
         ]);
         $job = JobPosting::create([
             'user_id' => $recruiter->id,
             'company_id' => $company->id,
-            'title' => 'Laravel Engineer',
-            'slug' => 'laravel-engineer',
+            'title' => $medicalCv ? 'Medical Officer – General Medicine' : 'Laravel Engineer',
+            'slug' => $medicalCv ? 'medical-officer-general-medicine' : 'laravel-engineer',
             'type' => 'full-time',
-            'category' => 'technology',
-            'location_type' => 'remote',
-            'location' => 'Remote',
-            'description' => 'We need Laravel, PHP, and MySQL. Preferred: React. Requirements: Bachelor\'s degree, 2 years experience.',
-            'requirements' => 'Laravel, PHP, MySQL, Bachelor\'s',
-            'skills' => ['Laravel', 'PHP', 'MySQL'],
-            'ats_keywords' => ['Laravel', 'PHP', 'MySQL', 'Git'],
+            'category' => $medicalCv ? 'healthcare' : 'technology',
+            'location_type' => $medicalCv ? 'onsite' : 'remote',
+            'location' => $medicalCv ? 'Dhanmondi Dhaka' : 'Remote',
+            'description' => $medicalCv
+                ? 'We are looking for a qualified Medical Officer to provide patient care, diagnose conditions, and maintain medical records.'
+                : 'We need Laravel, PHP, and MySQL. Preferred: React. Requirements: Bachelor\'s degree, 2 years experience.',
+            'requirements' => $medicalCv
+                ? "MBBS degree from a recognized medical institution\nValid registration with BMDC"
+                : 'Laravel, PHP, MySQL, Bachelor\'s',
+            'skills' => $medicalCv
+                ? ['Patient Care Clinical Diagnosis Medical Assessment Treatment Planning Patient Communication']
+                : ['Laravel', 'PHP', 'MySQL'],
+            'ats_keywords' => $medicalCv
+                ? ['MBBS', 'BMDC Registered', 'Medical Officer', 'Patient Care']
+                : ['Laravel', 'PHP', 'MySQL', 'Git'],
             'status' => JobStatus::Active,
             'moderation_status' => ModerationStatus::Approved,
             'published_at' => now(),
         ]);
 
-        $profiles = [
-            ['name' => 'Asha Rahman', 'skills' => ['Laravel', 'PHP', 'MySQL', 'Git', 'React'], 'headline' => 'Laravel developer'],
-            ['name' => 'Ben Cole', 'skills' => ['PHP', 'Git'], 'headline' => 'Backend intern'],
-            ['name' => 'Cara Diaz', 'skills' => ['Marketing', 'Excel'], 'headline' => 'Business student'],
-        ];
+        $profiles = $medicalCv
+            ? [
+                ['name' => 'Dr Asha Rahman', 'skills' => ['Patient Care', 'MBBS'], 'headline' => 'Medical Officer'],
+                ['name' => 'Dr Ben Cole', 'skills' => ['Clinical Diagnosis'], 'headline' => 'House officer'],
+                ['name' => 'Cara Diaz', 'skills' => ['Marketing', 'Excel'], 'headline' => 'Business student'],
+            ]
+            : [
+                ['name' => 'Asha Rahman', 'skills' => ['Laravel', 'PHP', 'MySQL', 'Git', 'React'], 'headline' => 'Laravel developer'],
+                ['name' => 'Ben Cole', 'skills' => ['PHP', 'Git'], 'headline' => 'Backend intern'],
+                ['name' => 'Cara Diaz', 'skills' => ['Marketing', 'Excel'], 'headline' => 'Business student'],
+            ];
 
         foreach ($profiles as $row) {
             $student = User::factory()->create([
@@ -181,15 +237,18 @@ class CvScreeningTest extends TestCase
                 'role' => UserRole::Student,
                 'email_verified_at' => now(),
             ]);
+            $resume = $medicalCv
+                ? "Education\n• MBBS from Dhaka Medical College\n• BMDC Registered\nExperience\n- Medical Officer intern\nSkills\n* Patient Care\n* Clinical Diagnosis"
+                : implode(' ', $row['skills']).' Laravel PHP projects Git';
             Profile::create([
                 'user_id' => $student->id,
                 'headline' => $row['headline'],
                 'bio' => 'Built campus tools with '.$row['headline'],
                 'location' => 'Dhaka',
                 'skills' => $row['skills'],
-                'education' => [['school' => 'State University', 'degree' => 'B.S. Computer Science', 'graduation_year' => 2026]],
-                'experience' => [['title' => 'Intern', 'company' => 'Campus Labs', 'years' => '1 year', 'details' => 'PHP work']],
-                'resume_text' => implode(' ', $row['skills']).' Laravel PHP projects Git',
+                'education' => [['school' => 'State University', 'degree' => $medicalCv ? 'MBBS' : 'B.S. Computer Science', 'graduation_year' => 2026]],
+                'experience' => [['title' => 'Intern', 'company' => 'Campus Labs', 'years' => '1 year', 'details' => $medicalCv ? 'Ward duty' : 'PHP work']],
+                'resume_text' => $resume,
                 'completeness' => 70,
             ]);
             Application::create([

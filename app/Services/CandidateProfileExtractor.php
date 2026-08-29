@@ -147,18 +147,33 @@ class CandidateProfileExtractor
     protected function sectionLines(string $text, array $headings): array
     {
         $pattern = '/(?:^|\n)\s*(?:'.implode('|', array_map(fn ($h) => preg_quote($h, '/'), $headings)).')\s*:?\s*\n([\s\S]{0,1200}?)(?=\n\s*[A-Z][A-Za-z ]{2,30}\s*:?\s*\n|$)/iu';
-        if (! preg_match($pattern, $text, $match)) {
+
+        try {
+            if (! preg_match($pattern, $text, $match)) {
+                return [];
+            }
+        } catch (\Throwable) {
             return [];
         }
 
         $lines = preg_split('/\n+/', $match[1] ?? '') ?: [];
 
         return collect($lines)
-            ->map(fn ($line) => trim(preg_replace('/^[\-\*\u2022•]+\s*/u', '', $line) ?? ''))
+            ->map(fn ($line) => $this->stripBulletPrefix((string) $line))
             ->filter(fn ($line) => mb_strlen($line) >= 2 && mb_strlen($line) <= 220)
             ->unique()
             ->values()
             ->all();
+    }
+
+    /**
+     * PCRE2 (PHP 8.2 on Windows) rejects \uXXXX. Use a Unicode-safe character class instead.
+     */
+    protected function stripBulletPrefix(string $line): string
+    {
+        $stripped = @preg_replace('/^[\s\-\*•]+/u', '', $line);
+
+        return trim(is_string($stripped) ? $stripped : $line);
     }
 
     /**

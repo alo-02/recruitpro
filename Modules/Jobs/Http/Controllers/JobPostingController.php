@@ -128,8 +128,8 @@ class JobPostingController extends Controller
         }
 
         $slug = $this->uniqueSlug($request->title);
-        $skills = $request->skills ? array_map('trim', explode(',', $request->skills)) : [];
-        $atsKeywords = $request->ats_keywords ? array_map('trim', explode(',', $request->ats_keywords)) : [];
+        $skills = JobPosting::parseKeywordList($request->skills);
+        $atsKeywords = JobPosting::parseKeywordList($request->ats_keywords);
         $status = JobStatus::tryFrom($request->status ?? 'active') ?? JobStatus::Active;
 
         $job = JobPosting::create([
@@ -176,8 +176,8 @@ class JobPostingController extends Controller
     {
         $this->authorize('update', $job);
 
-        $skills = $request->skills ? array_map('trim', explode(',', $request->skills)) : [];
-        $atsKeywords = $request->ats_keywords ? array_map('trim', explode(',', $request->ats_keywords)) : [];
+        $skills = JobPosting::parseKeywordList($request->skills);
+        $atsKeywords = JobPosting::parseKeywordList($request->ats_keywords);
         $status = JobStatus::tryFrom($request->status ?? $job->status->value) ?? $job->status;
 
         $job->update([

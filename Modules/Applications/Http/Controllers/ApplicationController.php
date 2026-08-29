@@ -88,7 +88,9 @@ class ApplicationController extends Controller
 
     public function recruiterIndex(Request $request): View
     {
-        $jobs = $request->user()->jobPostings()->latest()->get(['id', 'title', 'ats_keywords', 'ats_min_score']);
+        $jobs = $request->user()->jobPostings()
+            ->latest()
+            ->get(['id', 'title', 'slug', 'skills', 'ats_keywords', 'ats_min_score']);
 
         $selectedJob = null;
         if ($jobId = $request->get('job_id')) {

@@ -93,12 +93,7 @@ class AtsCvChecker
     {
         $keywords = $job->ats_keywords ?: ($job->skills ?: []);
 
-        return collect($keywords)
-            ->map(fn ($k) => trim((string) $k))
-            ->filter()
-            ->unique()
-            ->values()
-            ->all();
+        return JobPosting::parseKeywordList($keywords);
     }
 
     protected function buildCorpus(User $candidate, ?Profile $profile): string

@@ -44,7 +44,7 @@
                     <td class="text-body-md text-muted-rp">{{ $job->deadline?->format('M d, Y') ?? '—' }}</td>
                     <td class="text-nowrap">
                         @if($job->status->value === 'active')
-                        <form action="{{ route('screening.store', $job) }}" method="POST" class="d-inline">
+                        <form action="{{ route('screening.store', ['job' => $job->slug]) }}" method="POST" class="d-inline">
                             @csrf
                             <input type="hidden" name="top_n" value="10">
                             <button class="btn btn-rp-primary btn-sm" @disabled($job->applications_count < 1)>Start AI Screening</button>
