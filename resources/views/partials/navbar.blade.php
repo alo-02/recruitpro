@@ -1,6 +1,12 @@
 <header class="rp-navbar px-3 px-md-4">
     <div class="container-rp mx-auto d-flex justify-content-between align-items-center w-100">
-        <a href="{{ route('home') }}" class="rp-brand">RecruitPro</a>
+        <a href="{{ route('home') }}" class="rp-brand">
+            @include('partials.brand-mark', ['size' => 34])
+            <span class="rp-brand-word">
+                {{ $brand->siteName() }}
+                <span class="rp-brand-sub">{{ $brand->tagline() }}</span>
+            </span>
+        </a>
 
         <nav class="d-none d-md-flex gap-4 h-100">
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
@@ -18,7 +24,7 @@
                     <button type="submit" class="btn btn-rp-outline btn-sm">Logout</button>
                 </form>
             @else
-                <a href="{{ route('login') }}" class="btn btn-link text-secondary-rp text-label-md text-decoration-none p-0">Sign In</a>
+                <a href="{{ route('login') }}" class="btn btn-link text-secondary-rp text-label-md text-decoration-none p-0 d-none d-sm-inline">Sign In</a>
                 <a href="{{ route('login') }}#signup" class="btn btn-rp-primary">Get Started</a>
             @endauth
         </div>

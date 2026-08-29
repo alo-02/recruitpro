@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Admin\Http\Controllers\AdminController;
+use Modules\Admin\Http\Controllers\BrandingController;
 use Modules\Admin\Http\Controllers\PermissionController;
 
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -42,6 +43,9 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
         Route::get('/security-events', [AdminController::class, 'securityEvents'])->name('security-events');
         Route::patch('/security-events/{event}', [AdminController::class, 'resolveSecurityEvent'])->name('security-events.resolve');
     });
+
+    Route::get('/branding', [BrandingController::class, 'edit'])->name('branding.edit');
+    Route::put('/branding', [BrandingController::class, 'update'])->name('branding.update');
 
     Route::middleware('permission:permissions.manage')->group(function () {
         Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions');

@@ -74,7 +74,8 @@ class InterfaceChangesTest extends TestCase
             ->assertOk()
             ->assertDontSee(route('admin.cms'), false)
             ->assertDontSee(route('admin.plans'), false)
-            ->assertDontSee(route('admin.flags'), false);
+            ->assertDontSee(route('admin.flags'), false)
+            ->assertSee(route('admin.branding.edit'), false);
     }
 
     public function test_admin_reports_page_loads_and_pdf_downloads(): void

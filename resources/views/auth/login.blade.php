@@ -4,19 +4,22 @@
 
 @section('content')
 <div class="row g-0 min-vh-100">
-    <div class="col-lg-6 auth-brand-panel d-none d-lg-flex flex-column justify-content-between p-5 text-white"
-         style="background-image: linear-gradient(rgba(30,41,59,0.9), rgba(30,41,59,0.9)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200'); background-size:cover;">
-        <div class="d-flex align-items-center gap-2">
-            <span class="material-symbols-outlined text-white icon-fill" style="font-size:32px;">assured_workload</span>
-            <span class="text-title-lg fw-black">RecruitPro</span>
-        </div>
+    <div class="col-lg-6 auth-brand-panel d-none d-lg-flex flex-column justify-content-between p-5 text-white">
+        <a href="{{ route('home') }}" class="rp-brand">
+            @include('partials.brand-mark', ['size' => 40, 'tone' => 'light'])
+            <span class="rp-brand-word" style="color:#fff6e4;">
+                {{ $brand->siteName() }}
+                <span class="rp-brand-sub" style="color:#d4a017;">{{ $brand->tagline() }}</span>
+            </span>
+        </a>
         <div style="max-width:480px;">
-            <h1 class="text-display-lg text-white mb-3">Accelerate your hiring momentum.</h1>
+            <p class="text-label-md mb-3" style="color:#d4a017;">The match lens</p>
+            <h1 class="text-display-lg text-white mb-3">Look at the person, not just the paper.</h1>
             <p class="text-body-lg" style="color:var(--rp-on-primary-container);">
-                The enterprise-grade platform designed for high-stakes professional environments.
+                Sign in to build a profile, post a role, or run AI CV screening — scores advise, you decide.
             </p>
         </div>
-        <div class="text-label-md" style="color:var(--rp-on-primary-container);">&copy; {{ date('Y') }} RecruitPro Systems</div>
+        <div class="text-label-md" style="color:var(--rp-on-primary-container);">&copy; {{ date('Y') }} {{ $brand->siteName() }} Internship System</div>
     </div>
 
     <div class="col-lg-6 d-flex align-items-center justify-content-center p-4 p-lg-5 bg-surface-rp">

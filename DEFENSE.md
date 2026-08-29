@@ -482,7 +482,10 @@ Relations (short):
 | `admin/` | Reports, users, companies… |
 
 CSS: `public/css/recruitpro.css`  
-JS: `public/js/recruitpro.js` (home search, filters, toasts), `public/js/auth.js` (login/signup tabs)
+JS: `public/js/recruitpro.js` (home search, iris gaze, filters, toasts), `public/js/auth.js` (login/signup tabs)
+
+**Visual identity (say this if they ask “design kothay unique?”):**  
+The **iris / match-lens mark** is the metaphor — the system *looks* at a CV the way a placement officer would. Palette is **ink + paper cream + saffron** (not generic LinkedIn blue). Display type is **Fraunces**, UI type is **Manrope**. Cards use an offset stamp shadow. Files: `partials/brand-mark.blade.php`, `home/index.blade.php`, `public/css/recruitpro.css`.
 
 ---
 
@@ -515,8 +518,11 @@ Gmail wraps long signed URLs. We send a button **and** a 6-digit code (`VerifyEm
 **Q: How are images loaded?**  
 Not only `/storage` symlink (often broken on Windows). `MediaController` streams files from `storage/app/public` via `/media/{path}`.
 
+**Q: Why doesn’t the UI look like a default Bootstrap theme?**  
+Custom “match lens” identity: iris logo, paper/ink/saffron colors, Fraunces + Manrope, stamp-style cards. Bootstrap is only the grid. See Section 10.
+
 **Q: How do you test?**  
-`php artisan test` — Feature tests for auth, screening rank, no auto-reject, interview email, UI removals, admin PDF. 26 tests.
+`php artisan test` — Feature tests for auth, screening, ATS filters, interview email, UI, admin PDF.
 
 **Q: REST API?**  
 `Modules/Api/Routes/api.php` — `/api/jobs`, `/api/auth/login` (Sanctum token), applications, recommendations.

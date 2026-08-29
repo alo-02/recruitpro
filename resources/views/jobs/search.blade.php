@@ -58,8 +58,9 @@
 
     <div class="job-search-results">
         <div class="mb-4">
+            <p class="section-kicker text-label-md mb-1">The opportunity ledger</p>
             <h1 class="text-headline-md text-primary-rp mb-1">Search Internships & Jobs</h1>
-            <p class="text-body-md text-muted-rp mb-3">{{ $jobs->total() }} jobs found</p>
+            <p class="text-body-md text-muted-rp mb-3">{{ $jobs->total() }} roles in view</p>
             <form method="GET" action="{{ route('jobs.index') }}" class="input-group">
                 <span class="input-group-text"><span class="material-symbols-outlined">search</span></span>
                 <input type="text" name="q" class="form-control" placeholder="Search by title, company, or keyword..." value="{{ request('q') }}">

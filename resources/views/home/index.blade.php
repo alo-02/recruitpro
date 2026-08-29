@@ -3,17 +3,37 @@
 @section('title', 'Home')
 
 @section('content')
-{{-- Hero --}}
-<section class="hero-pattern py-5 text-center position-relative">
-    <div class="container-rp mx-auto px-3 position-relative" style="z-index:10;">
-        <h1 class="text-display-lg text-primary-rp mb-3">
-            Bridge the Gap Between <span class="text-secondary-rp">Talent</span> and <span class="text-secondary-rp">Opportunity</span>
-        </h1>
-        <p class="text-body-lg text-muted-rp mb-4 mx-auto" style="max-width:640px;">
-            Discover your next career move or find the perfect candidate to scale your enterprise. RecruitPro connects ambition with industry-leading roles.
-        </p>
+<section class="hero-pattern home-hero position-relative">
+    <div class="container-rp mx-auto px-3">
+        <div class="row align-items-center g-4 g-lg-5">
+            <div class="col-lg-7">
+                <p class="home-kicker text-label-md mb-0">Campus to career, scored with care</p>
+                <h1 class="text-display-lg text-primary-rp mb-3">
+                    See the fit.<br>
+                    <span class="text-secondary-rp">Don’t guess it.</span>
+                </h1>
+                <p class="text-body-lg text-muted-rp mb-4 home-lead">
+                    RecruitPro is a placement lens — it reads a CV the way a human officer would, then ranks the match. You still make the call.
+                </p>
+            </div>
+            <div class="col-lg-5">
+                <div class="home-stage" id="home-iris-stage">
+                    <div class="home-iris-frame">
+                        @include('partials.brand-mark', ['size' => 168])
+                    </div>
+                    <div class="home-score-chip">
+                        <span class="text-label-md" style="color:#e8d7b8;">Match lens</span>
+                        <strong>87%</strong>
+                    </div>
+                    <div class="home-note-chip">
+                        <div class="text-label-md text-secondary-rp mb-1">Human decision</div>
+                        <p class="text-body-md mb-0">AI ranks. Recruiters decide. Nothing is auto-rejected.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <form method="GET" action="{{ route('jobs.index') }}" class="home-job-filters glass-card p-3 p-md-4 mx-auto text-start">
+        <form method="GET" action="{{ route('jobs.index') }}" class="home-job-filters glass-card p-3 p-md-4 mx-auto text-start mt-4 mt-lg-5">
             <div class="row g-3 align-items-end">
                 <div class="col-12 col-md-6 col-lg-4">
                     <label class="form-label text-label-md text-muted-rp mb-1" for="search-keyword">Keyword</label>
@@ -64,10 +84,52 @@
     </div>
 </section>
 
-{{-- Categories --}}
 <section class="container-rp mx-auto px-3 py-5">
+    <p class="section-kicker text-label-md">How the lens works</p>
+    <h2 class="text-headline-md text-primary-rp mb-4">Three steps. One human decision.</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="rp-card rp-card-lg h-100">
+                <div class="ledger-rail">
+                    <span class="ledger-index">01</span>
+                    <div>
+                        <h3 class="text-title-lg text-primary-rp mb-2">Build a readable profile</h3>
+                        <p class="text-body-md text-muted-rp mb-0">Students upload a CV and skills. The system extracts education, experience, and tools — not just a keyword dump.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rp-card rp-card-lg h-100">
+                <div class="ledger-rail">
+                    <span class="ledger-index">02</span>
+                    <div>
+                        <h3 class="text-title-lg text-primary-rp mb-2">Screen against the role</h3>
+                        <p class="text-body-md text-muted-rp mb-0">ATS keywords and AI ranking score the fit. Recruiters see why someone matched — and what is missing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rp-card rp-card-lg h-100">
+                <div class="ledger-rail">
+                    <span class="ledger-index">03</span>
+                    <div>
+                        <h3 class="text-title-lg text-primary-rp mb-2">Interview on your terms</h3>
+                        <p class="text-body-md text-muted-rp mb-0">Shortlist, override, or schedule. The score is advisory. The faculty-facing idea: machines rank, people hire.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container-rp mx-auto px-3 pb-5">
     <div class="d-flex justify-content-between align-items-end mb-4">
-        <h2 class="text-headline-md text-primary-rp mb-0">Explore by Category</h2>
+        <div>
+            <p class="section-kicker text-label-md mb-1">Browse the ledger</p>
+            <h2 class="text-headline-md text-primary-rp mb-0">Explore by Category</h2>
+        </div>
         <a href="{{ route('jobs.index') }}" class="text-secondary-rp text-label-md text-decoration-none d-flex align-items-center gap-1">
             View All <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
         </a>
@@ -84,21 +146,21 @@
     </div>
 </section>
 
-{{-- Featured Jobs --}}
 <section class="bg-surface-container-low py-5">
     <div class="container-rp mx-auto px-3">
         <div class="mb-4">
+            <p class="section-kicker text-label-md mb-1">Hand-picked, not auto-fed</p>
             <h2 class="text-headline-md text-primary-rp mb-1">Featured Opportunities</h2>
-            <p class="text-body-md text-muted-rp mb-0">Top roles hand-picked for ambitious professionals.</p>
+            <p class="text-body-md text-muted-rp mb-0">Roles worth a second look — internships and jobs from approved companies.</p>
         </div>
         <div class="bento-grid">
             @forelse($featuredJobs as $index => $job)
             <div class="rp-card {{ $index === 0 ? 'rp-card-lg bento-large' : 'rp-card-md d-flex flex-column' }} position-relative">
                 @if($job->is_featured && $index === 0)
-                <span class="position-absolute top-0 end-0 bg-primary text-white px-2 py-1 text-label-md" style="border-radius:0 0.5rem 0 0.5rem;">Hot Role</span>
+                <span class="hot-role">Hot Role</span>
                 @endif
                 <div class="d-flex align-items-center gap-2 mb-3">
-                    <div class="bg-surface-container rounded d-flex align-items-center justify-content-center border" style="width:48px;height:48px;">
+                    <div class="bg-surface-container rounded-circle d-flex align-items-center justify-content-center border" style="width:48px;height:48px;">
                         <span class="material-symbols-outlined text-muted-rp">business</span>
                     </div>
                     <div>
@@ -128,19 +190,20 @@
     </div>
 </section>
 
-{{-- CTA --}}
 <section class="container-rp mx-auto px-3 py-5">
     <div class="cta-section row g-0">
-        <div class="col-md-6 cta-panel border-end border-secondary">
+        <div class="col-md-6 cta-panel border-end" style="border-color:#3a2f22 !important;">
+            <p class="text-label-md mb-2" style="color:#d4a017;">For students</p>
             <h2 class="text-headline-lg text-white mb-2">Find an Internship</h2>
-            <p class="text-body-lg mb-4" style="color:var(--rp-primary-fixed-dim);">Build your profile, discover curated opportunities, and kickstart your career trajectory.</p>
+            <p class="text-body-lg mb-4" style="color:var(--rp-primary-fixed-dim);">Build your profile, let the lens read your CV, and apply where the fit is real.</p>
             <a href="{{ route('profile.builder') }}" class="btn btn-light text-primary-rp text-label-md d-inline-flex align-items-center gap-1">
                 Create Candidate Profile <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
             </a>
         </div>
         <div class="col-md-6 cta-panel cta-panel-dark">
-            <h2 class="text-headline-lg text-white mb-2">Hire Top Talent</h2>
-            <p class="text-body-lg mb-4" style="color:var(--rp-primary-fixed-dim);">Access a diverse pool of pre-vetted candidates and streamline your recruitment pipeline.</p>
+            <p class="text-label-md mb-2" style="color:#d4a017;">For recruiters</p>
+            <h2 class="text-headline-lg text-white mb-2">Hire with a second look</h2>
+            <p class="text-body-lg mb-4" style="color:var(--rp-primary-fixed-dim);">ATS keywords plus AI ranking — shortlist faster, override anytime, never auto-reject.</p>
             <a href="{{ route('recruiter.dashboard') }}" class="btn btn-rp-primary d-inline-flex align-items-center gap-1">
                 Access Employer Portal <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
             </a>

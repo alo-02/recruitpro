@@ -6,7 +6,30 @@ document.addEventListener('DOMContentLoaded', function () {
     initJobFilters();
     initKanbanDrag();
     initToasts();
+    initIrisGaze();
 });
+
+function initIrisGaze() {
+    const stage = document.getElementById('home-iris-stage');
+    const pupil = stage?.querySelector('.rp-iris-pupil');
+    const glint = stage?.querySelector('.rp-iris-glint');
+    if (!stage || !pupil) return;
+
+    stage.addEventListener('mousemove', function (e) {
+        const box = stage.getBoundingClientRect();
+        const x = (e.clientX - box.left) / box.width - 0.5;
+        const y = (e.clientY - box.top) / box.height - 0.5;
+        const dx = Math.max(-3.2, Math.min(3.2, x * 7));
+        const dy = Math.max(-2.4, Math.min(2.4, y * 6));
+        pupil.setAttribute('transform', 'translate(' + dx + ' ' + dy + ')');
+        if (glint) glint.setAttribute('transform', 'translate(' + dx + ' ' + dy + ')');
+    });
+
+    stage.addEventListener('mouseleave', function () {
+        pupil.removeAttribute('transform');
+        if (glint) glint.removeAttribute('transform');
+    });
+}
 
 function initSearchForm() {
     const searchForm = document.getElementById('hero-search-form');

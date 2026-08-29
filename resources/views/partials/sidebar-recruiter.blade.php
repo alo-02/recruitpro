@@ -1,11 +1,11 @@
 <nav class="rp-sidebar d-none d-lg-flex">
     <div class="p-3 border-bottom d-flex align-items-center gap-3">
-        <div class="bg-primary-rp rounded d-flex align-items-center justify-content-center text-white" style="width:40px;height:40px;">
-            <span class="material-symbols-outlined">business_center</span>
-        </div>
+        <a href="{{ route('home') }}" class="rp-brand">
+            @include('partials.brand-mark', ['size' => 36])
+        </a>
         <div>
-            <div class="text-title-lg fw-bold text-primary-rp">Enterprise Portal</div>
-            <div class="text-label-md text-muted-rp">Recruiter Access</div>
+            <div class="text-title-lg fw-bold text-primary-rp">Recruiter Portal</div>
+            <div class="text-label-md text-muted-rp">Look at the fit</div>
         </div>
     </div>
 
