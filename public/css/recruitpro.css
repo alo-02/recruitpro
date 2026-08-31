@@ -712,6 +712,25 @@ body {
     box-shadow: 0 0 0 1px var(--rp-saffron), 7px 7px 0 rgba(196, 92, 38, 0.14);
 }
 
+.rp-match-bar {
+    height: 8px;
+    background: var(--rp-outline-variant);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.rp-match-fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    min-width: 0;
+}
+
+.rp-match-compact .rp-match-bar {
+    height: 6px;
+    min-width: 72px;
+}
+
 .rp-progress {
     height: 4px;
     background: var(--rp-outline-variant);

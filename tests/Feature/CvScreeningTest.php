@@ -76,7 +76,7 @@ class CvScreeningTest extends TestCase
                 'status' => '',
             ]))
             ->assertOk()
-            ->assertSee('ATS CV Screening')
+            ->assertSee('AI CV Screening')
             ->assertSee('Re-scan all CVs for this job');
     }
 

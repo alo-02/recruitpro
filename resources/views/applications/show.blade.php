@@ -35,34 +35,23 @@
     <div class="col-lg-4">
         <div class="rp-card rp-card-lg mb-3">
             <div class="mb-2">Status: <span class="badge {{ $application->status->badgeClass() }}">{{ $application->status->label() }}</span></div>
-            <div class="mb-2">ATS Match: <strong>{{ $application->match_score ?? 0 }}%</strong>
-                @php $threshold = $application->jobPosting->ats_min_score ?? 50; @endphp
-                <span class="badge {{ ($application->match_score ?? 0) >= $threshold ? 'bg-success' : 'bg-warning text-dark' }}">
-                    {{ ($application->match_score ?? 0) >= $threshold ? 'Qualified' : 'Below '.$threshold.'%' }}
-                </span>
-            </div>
-
-            @if($application->ats_matched_keywords || $application->ats_missing_keywords)
-            <div class="mb-3">
-                <div class="text-label-md text-muted-rp mb-1">Matched keywords</div>
-                @forelse($application->ats_matched_keywords ?? [] as $kw)
-                    <span class="badge bg-success-subtle text-success me-1 mb-1">{{ $kw }}</span>
-                @empty
-                    <span class="text-muted-rp">None</span>
-                @endforelse
-                <div class="text-label-md text-muted-rp mt-2 mb-1">Missing keywords</div>
-                @forelse($application->ats_missing_keywords ?? [] as $kw)
-                    <span class="badge bg-danger-subtle text-danger me-1 mb-1">{{ $kw }}</span>
-                @empty
-                    <span class="text-muted-rp">None</span>
-                @endforelse
-            </div>
+            @if($isOwner || auth()->user()?->isAdmin())
+                @include('applications._ai-match', [
+                    'score' => $application->match_score ?? 0,
+                    'threshold' => $application->jobPosting->ats_min_score ?? 50,
+                    'matched' => $application->ats_matched_keywords ?? [],
+                    'missing' => $application->ats_missing_keywords ?? [],
+                    'summary' => $application->ai_summary,
+                    'source' => $application->ai_match_source,
+                ])
+            @else
+                <div class="mb-2">Match: <strong>{{ $application->match_score ?? 0 }}%</strong></div>
             @endif
 
             @if($isOwner)
             <form method="POST" action="{{ route('applications.ats-rescan', $application) }}" class="mb-3">
                 @csrf
-                <button class="btn btn-rp-outline w-100 btn-sm">Re-run ATS check</button>
+                <button class="btn btn-rp-outline w-100 btn-sm">Re-run AI match</button>
             </form>
             @endif
 

@@ -5,8 +5,8 @@
 @section('content')
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-        <h1 class="text-headline-md text-primary-rp mb-1">ATS CV Screening</h1>
-        <p class="text-body-md text-muted-rp mb-0">Filter applicants by job keywords matched against profile + resume text.</p>
+        <h1 class="text-headline-md text-primary-rp mb-1">AI CV Screening</h1>
+        <p class="text-body-md text-muted-rp mb-0">Gemini scores each CV against the job description. Filter, then open a candidate to read the summary.</p>
     </div>
     @if($selectedJob && $selectedJob->slug)
     <form method="POST" action="{{ route('jobs.ats-rescan', ['job' => $selectedJob->slug]) }}">
@@ -82,7 +82,8 @@
                 <tr>
                     <th>Candidate</th>
                     <th>Job</th>
-                    <th>ATS Score</th>
+                    <th>AI score</th>
+                    <th>Summary</th>
                     <th>Matched</th>
                     <th>Missing</th>
                     <th>Status</th>
@@ -101,11 +102,17 @@
                         <div class="text-muted-rp text-label-md">{{ $app->applicant->email }}</div>
                     </td>
                     <td>{{ $app->jobPosting->title }}</td>
-                    <td>
-                        <span class="badge {{ $pass ? 'bg-success' : 'bg-warning text-dark' }}">
-                            {{ $app->match_score ?? 0 }}%
-                        </span>
+                    <td style="min-width:120px;">
+                        @include('applications._ai-match', [
+                            'score' => $app->match_score ?? 0,
+                            'threshold' => $threshold,
+                            'source' => $app->ai_match_source,
+                            'compact' => true,
+                        ])
                         <div class="text-label-md text-muted-rp">{{ $pass ? 'Qualified' : 'Below threshold' }}</div>
+                    </td>
+                    <td style="max-width:220px;">
+                        <div class="text-body-md">{{ Str::limit($app->ai_summary, 120) ?: '—' }}</div>
                     </td>
                     <td style="max-width:180px;">
                         @forelse($app->ats_matched_keywords ?? [] as $kw)
@@ -130,7 +137,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="7" class="text-center text-muted-rp py-4">No applications match this ATS filter.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted-rp py-4">No applications match this ATS filter.</td></tr>
                 @endforelse
             </tbody>
         </table>

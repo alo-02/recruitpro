@@ -215,6 +215,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $ats = app(\App\Services\AtsCvChecker::class);
+        $previousGemini = config('services.gemini.key');
+        config(['services.gemini.key' => '']);
 
         foreach ([
             [$jobModels[1]->id, ApplicationStatus::Screening, 3],
@@ -230,6 +232,8 @@ class DatabaseSeeder extends Seeder
             ]);
             $ats->applyToApplication($application, false);
         }
+
+        config(['services.gemini.key' => $previousGemini]);
 
         $this->call(RolesAndPermissionsSeeder::class);
         $this->call(GrowthFeaturesSeeder::class);

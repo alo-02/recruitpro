@@ -39,6 +39,11 @@
                 <div class="kanban-card mb-2" id="app-{{ $app->id }}" draggable="true" data-id="{{ $app->id }}">
                     <div class="text-body-md fw-semibold">{{ $app->applicant->name }}</div>
                     <span class="text-label-md text-muted-rp">{{ $app->jobPosting->title }}</span>
+                    @if($app->match_score !== null)
+                    <div class="mt-1">
+                        <span class="badge bg-{{ $app->matchBand() }} {{ $app->matchBand() === 'warning' ? 'text-dark' : '' }}">{{ $app->match_score }}%</span>
+                    </div>
+                    @endif
                     <div class="mt-2">
                         <a href="{{ route('applications.show', $app) }}" class="text-label-md text-secondary-rp">Open</a>
                     </div>

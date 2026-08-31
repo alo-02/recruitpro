@@ -31,6 +31,9 @@
                         <span class="badge {{ $row->overall_score >= 75 ? 'bg-success' : ($row->overall_score >= 50 ? 'bg-warning text-dark' : 'bg-secondary') }}">
                             {{ $row->overall_score }}%
                         </span>
+                        <div class="rp-match-bar mt-1" style="width:88px;">
+                            <span class="rp-match-fill bg-{{ $row->overall_score >= 75 ? 'success' : ($row->overall_score >= 50 ? 'warning' : 'secondary') }}" style="width: {{ $row->overall_score }}%"></span>
+                        </div>
                         @if($row->ai_recommended)
                             <div class="text-label-md text-success mt-1">AI shortlist</div>
                         @endif

@@ -23,6 +23,8 @@ class Application extends Model
         'match_score',
         'ats_matched_keywords',
         'ats_missing_keywords',
+        'ai_summary',
+        'ai_match_source',
         'ats_checked_at',
         'applied_at',
         'withdrawn_at',
@@ -76,8 +78,15 @@ class Application extends Model
         return $this->hasMany(ScreeningResult::class);
     }
 
-    public function isWithdrawn(): bool
+    public function matchBand(): string
     {
-        return $this->status === ApplicationStatus::Withdrawn;
+        $score = (int) ($this->match_score ?? 0);
+
+        return $score >= 75 ? 'success' : ($score >= 50 ? 'warning' : 'secondary');
+    }
+
+    public function isGeminiScored(): bool
+    {
+        return $this->ai_match_source === 'gemini';
     }
 }

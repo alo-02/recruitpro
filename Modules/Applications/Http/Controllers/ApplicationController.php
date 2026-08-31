@@ -161,7 +161,7 @@ class ApplicationController extends Controller
         $this->ats->applyToApplication($application);
         ActivityLogger::log('application.ats_rescanned', $application);
 
-        return back()->with('success', 'ATS CV scan refreshed.');
+        return back()->with('success', 'AI match refreshed.');
     }
 
     public function rescanJobAts(Request $request, JobPosting $job): RedirectResponse
@@ -174,7 +174,7 @@ class ApplicationController extends Controller
             $count++;
         });
 
-        return back()->with('success', "ATS rescanned {$count} applications for this job.");
+        return back()->with('success', "AI match refreshed for {$count} applications.");
     }
 
     public function updateStatus(Request $request, Application $application): RedirectResponse

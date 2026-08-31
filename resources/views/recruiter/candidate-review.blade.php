@@ -20,7 +20,17 @@
                 </div>
             </div>
             <div class="mb-2"><span class="badge {{ $app->status->badgeClass() }}">{{ $app->status->label() }}</span></div>
-            <div class="mb-3 text-label-md">Match: {{ $app->match_score ?? '—' }}%</div>
+            <div class="mb-3">
+                @include('applications._ai-match', [
+                    'score' => $app->match_score ?? 0,
+                    'threshold' => $app->jobPosting->ats_min_score ?? 50,
+                    'summary' => $app->ai_summary,
+                    'source' => $app->ai_match_source,
+                    'matched' => $app->ats_matched_keywords ?? [],
+                    'missing' => $app->ats_missing_keywords ?? [],
+                    'compact' => false,
+                ])
+            </div>
             <div class="d-flex gap-2">
                 <a href="{{ route('applications.show', $app) }}" class="btn btn-rp-primary btn-sm flex-grow-1">Review</a>
                 <a href="{{ route('candidates.show', $app->applicant) }}" class="btn btn-rp-outline btn-sm">Profile</a>

@@ -36,6 +36,7 @@ class CvScreeningEngine
         protected ResumeTextExtractor $extractor,
         protected CandidateProfileExtractor $profileExtractor,
         protected JobRequirementAnalyzer $jobAnalyzer,
+        protected GeminiCvMatcher $gemini,
     ) {}
 
     public function run(JobPosting $job, User $recruiter, int $topN = 10): ScreeningSession
@@ -57,8 +58,11 @@ class CvScreeningEngine
             ->get();
 
         $evaluated = [];
-        foreach ($applications as $application) {
+        foreach ($applications as $index => $application) {
             try {
+                if ($index > 0 && $this->gemini->enabled()) {
+                    usleep(200000);
+                }
                 $evaluated[] = $this->scoreApplication($application, $job, $requirements);
             } catch (\Throwable $e) {
                 report($e);
@@ -89,6 +93,8 @@ class CvScreeningEngine
                 'match_score' => $row['overall_score'],
                 'ats_matched_keywords' => array_column($row['matched_points'], 'label'),
                 'ats_missing_keywords' => array_column($row['missing_points'], 'label'),
+                'ai_summary' => $row['ai_explanation'],
+                'ai_match_source' => $row['match_source'] ?? 'fallback',
                 'ats_checked_at' => now(),
             ]);
         }
@@ -124,6 +130,44 @@ class CvScreeningEngine
 
         $extractedProfile = $this->profileExtractor->extract($candidate, $profile, $resumeText);
         $haystack = mb_strtolower($extractedProfile['raw_text'] ?? '');
+
+        $gemini = $this->gemini->match(
+            (string) ($extractedProfile['raw_text'] ?? ''),
+            $this->gemini->jobDescriptionFrom($job)
+        );
+
+        if ($gemini) {
+            $matched = array_map(
+                fn ($skill) => ['label' => $skill, 'detail' => 'Gemini found this in the CV'],
+                $gemini['matched_skills']
+            );
+            $missing = array_map(
+                fn ($skill) => ['label' => $skill, 'detail' => 'Required in the job, not evidenced in the CV'],
+                $gemini['missing_skills']
+            );
+            $overall = $gemini['match_score'];
+            $breakdown = [
+                'gemini_match' => $overall,
+                'matched_skills' => count($gemini['matched_skills']),
+                'missing_skills' => count($gemini['missing_skills']),
+            ];
+            $explanation = $gemini['summary'];
+            $recommendation = $this->recommend($overall, $matched, $missing);
+            unset($extractedProfile['raw_text']);
+
+            return [
+                'application' => $application,
+                'overall_score' => max(0, min(100, $overall)),
+                'extracted_profile' => $extractedProfile,
+                'matched_points' => $matched,
+                'partial_matches' => [],
+                'missing_points' => $missing,
+                'score_breakdown' => $breakdown,
+                'ai_explanation' => $explanation,
+                'ai_recommendation' => $recommendation,
+                'match_source' => 'gemini',
+            ];
+        }
 
         $required = $this->compareList($requirements['required_skills'] ?? [], $haystack);
         $preferred = $this->compareList($requirements['preferred_skills'] ?? [], $haystack);
@@ -167,6 +211,7 @@ class CvScreeningEngine
             'score_breakdown' => $breakdown,
             'ai_explanation' => $explanation,
             'ai_recommendation' => $recommendation,
+            'match_source' => 'fallback',
         ];
     }
 
